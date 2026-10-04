@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { site, siteUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -85,7 +86,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       className={cn("h-full", "antialiased", fraunces.variable, inter.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
