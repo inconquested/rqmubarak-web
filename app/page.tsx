@@ -2,6 +2,7 @@ import { About } from "@/components/landing/about";
 import { Footer } from "@/components/landing/footer";
 import { Hero } from "@/components/landing/hero";
 import { JsonLd } from "@/components/landing/json-ld";
+import { Mading } from "@/components/landing/mading";
 import { Navbar } from "@/components/landing/navbar";
 import { Programs } from "@/components/landing/programs";
 import { System } from "@/components/landing/system";
@@ -16,6 +17,7 @@ export default function Home() {
         <About />
         <Programs />
         <System />
+        <Mading />
       </main>
       <Footer />
     </div>

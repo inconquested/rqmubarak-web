@@ -13,6 +13,7 @@ export const NAV_LINKS = [
   { label: "Profil", href: "#profil" },
   { label: "Program", href: "#program" },
   { label: "Sistem", href: "#sistem" },
+  { label: "Mading", href: "#mading" },
   { label: "Kontak", href: "#kontak" },
 ] as const;
 

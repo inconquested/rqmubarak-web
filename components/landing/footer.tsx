@@ -67,6 +67,14 @@ export function Footer() {
                     Sistem Digital
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="#mading"
+                    className="transition-colors hover:text-[#1d2b21]"
+                  >
+                    Mading
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>

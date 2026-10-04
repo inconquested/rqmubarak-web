@@ -53,7 +53,7 @@ export function Navbar() {
               ))}
             </div>
           </details>
-          <a href="#kontak">
+          <a href="/portal/login">
             <Button size="sm" className="rounded-lg">
               Login
             </Button>

@@ -220,6 +220,12 @@
   .animate-drift {
     animation: none;
   }
+  .notice-in {
+    animation: none;
+  }
+  .skeleton::after {
+    animation: none;
+  }
   details[open] .menu-panel {
     animation: none;
   }
@@ -231,4 +237,124 @@
 
 details[open] .menu-panel {
   animation: menu-in 200ms var(--ease-out);
+}
+
+/* Portal: notifikasi hasil aksi — slide+fade 200ms, jalan di main thread lepas */
+@keyframes notice-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.99);
+  }
+}
+
+.notice-in {
+  animation: notice-in 200ms var(--ease-out);
+}
+
+/* Portal: skeleton loading — shimmer linear konstan */
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #eef4ec;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.7),
+    transparent
+  );
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* Scrollbar gaya aplikasi: tipis, thumb sage, track transparan */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #bccfba transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #bccfba;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #9db5a0;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Rel geser tanpa thumb bar (carousel) — affordance dari tombol + snap */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Portal: tabel scroll horizontal di mobile — bayangan tepi penanda bisa
+   digeser + kolom pertama menempel. Murni CSS, tanpa JS. Menempel ke
+   scrollport bawaan shadcn ([data-slot="table-container"]). */
+[data-slot="table-container"] {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background:
+    linear-gradient(to right, #ffffff 30%, rgba(255, 255, 255, 0)),
+    linear-gradient(to left, #ffffff 30%, rgba(255, 255, 255, 0)) 100% 0,
+    radial-gradient(
+      farthest-side at 0% 50%,
+      rgba(29, 43, 33, 0.14),
+      rgba(29, 43, 33, 0)
+    ),
+    radial-gradient(
+      farthest-side at 100% 50%,
+      rgba(29, 43, 33, 0.14),
+      rgba(29, 43, 33, 0)
+    )
+      100% 0;
+  background-repeat: no-repeat;
+  background-size:
+    32px 100%,
+    32px 100%,
+    12px 100%,
+    12px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+[data-slot="table-container"] :is(th, td):first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #ffffff;
+  box-shadow: 1px 0 0 0 #e7efe6;
 }

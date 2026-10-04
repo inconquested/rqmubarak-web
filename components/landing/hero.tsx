@@ -67,7 +67,7 @@ export function Hero() {
         </Enter>
         <Enter delay={0.16}>
           <div className="mt-6 sm:mt-7">
-            <a href="#program">
+            <a href="/portal/login">
               <Button size="lg">Portal Pengajar</Button>
             </a>
           </div>
