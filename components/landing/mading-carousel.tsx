@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,17 +30,28 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
     let last = el.scrollLeft;
     let skew = 0;
     let idle: ReturnType<typeof setTimeout>;
+    // Ukuran layout di-cache — loop hanya baca scrollLeft (murah, tanpa
+    // reflow) dan tulis transform. Ukur ulang hanya saat ukuran berubah.
+    let vw = 1;
+    let max = 0;
+    let centers: number[] = [];
 
+    const measure = () => {
+      vw = el.clientWidth || 1;
+      max = el.scrollWidth - el.clientWidth - 4;
+      centers = Array.from(
+        el.querySelectorAll<HTMLElement>("[data-mading-card]"),
+      ).map((c) => c.offsetLeft + c.offsetWidth / 2);
+    };
     const render = (s: number) => {
-      const mid = el.scrollLeft + el.clientWidth / 2;
+      const mid = el.scrollLeft + vw / 2;
       const cards = el.querySelectorAll<HTMLElement>("[data-mading-card]");
       let best = 0;
       let bd = Infinity;
       cards.forEach((c, i) => {
-        const cc = c.offsetLeft + c.offsetWidth / 2;
-        const off = (cc - mid) / el.clientWidth;
+        const off = ((centers[i] ?? 0) - mid) / vw;
         c.style.transform = `perspective(1100px) rotateY(${(-off * 12).toFixed(2)}deg) skewX(${s.toFixed(2)}deg)`;
-        const d = Math.abs(c.offsetLeft - el.scrollLeft);
+        const d = Math.abs((centers[i] ?? 0) - vw / 2 - el.scrollLeft);
         if (d < bd) {
           bd = d;
           best = i;
@@ -49,7 +61,6 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
         idxRef.current = best;
         setIndex(best);
       }
-      const max = el.scrollWidth - el.clientWidth - 4;
       const key = `${el.scrollLeft > 4}|${el.scrollLeft < max}`;
       if (endsRef.current !== key) {
         endsRef.current = key;
@@ -73,14 +84,19 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
         render(0);
       }, 280);
     };
+    measure();
     render(0);
     el.addEventListener("scroll", kick, { passive: true });
-    window.addEventListener("resize", kick);
+    const ro = new ResizeObserver(() => {
+      measure();
+      kick();
+    });
+    ro.observe(el);
     return () => {
       cancelAnimationFrame(raf);
       clearTimeout(idle);
       el.removeEventListener("scroll", kick);
-      window.removeEventListener("resize", kick);
+      ro.disconnect();
     };
   }, [reduce, items.length]);
 
@@ -98,7 +114,7 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
     <div>
       <div
         ref={trackRef}
-        className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-2 pb-4 sm:mx-0 sm:px-0.5"
+        className="no-scrollbar relative -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-2 pb-4 sm:mx-0 sm:px-0.5"
       >
         {items.map((m) => (
           <Card
@@ -107,10 +123,12 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
             className="lift flex h-full w-full max-w-sm shrink-0 snap-start flex-col overflow-hidden basis-[82%] sm:basis-[48%] lg:basis-[32%]"
           >
             {m.thumb_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={m.thumb_url}
                 alt=""
+                width={640}
+                height={360}
+                sizes="(max-width: 640px) 82vw, (max-width: 1024px) 48vw, 400px"
                 loading="lazy"
                 draggable={false}
                 className="aspect-video w-full object-cover"
