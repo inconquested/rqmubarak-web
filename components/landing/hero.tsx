@@ -60,9 +60,9 @@ export function Hero() {
         </Enter>
         <Enter delay={0.08}>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-[#6b7a6e] sm:mt-5 sm:text-[15px]">
-            Rumah Qur&rsquo;an Mubarak menemani anak hingga dewasa membaca dan
-            menghafal Al-Qur&rsquo;an dalam halaqah yang hangat, dengan catatan
-            kemajuan yang rapi.
+            Tempat les mengaji anak hingga tahsin dewasa: membaca dan
+            menghafal Al-Qur&rsquo;an dalam halaqah yang hangat, dengan
+            catatan kemajuan yang rapi.
           </p>
         </Enter>
         <Enter delay={0.16}>

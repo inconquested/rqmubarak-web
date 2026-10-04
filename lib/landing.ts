@@ -29,21 +29,21 @@ export const PROGRAMS: Program[] = [
     icon: BookOpen,
     title: "Reguler",
     description:
-      "Kelas dasar untuk anak dan remaja yang sedang belajar membaca Al-Qur'an juga menambah hafalan dengan tajwid yang benar.",
+      "Les mengaji anak dan remaja agar lancar membaca Al-Qur'an sekaligus menambah hafalan tahfidz dengan tajwid yang benar.",
     frequency: "2x seminggu",
   },
   {
     icon: Zap,
     title: "Intensif",
     description:
-      "Program terarah untuk santri yang ingin menambah hafalan secara konsisten dan terukur.",
+      "Program intensif hafalan untuk santri yang ingin menambah ziyadah dan menjaga murajaah secara konsisten dan terukur.",
     frequency: "5x seminggu",
   },
   {
     icon: Users,
     title: "Dewasa",
     description:
-      "Kelas fleksibel bagi orang tua dan pekerja yang ingin memperbaiki bacaan dari awal.",
+      "Kelas fleksibel bagi orang tua dan pekerja yang ingin belajar mengaji dari nol atau mengikuti tahsin Al-Qur'an.",
     frequency: "2x seminggu",
   },
 ];

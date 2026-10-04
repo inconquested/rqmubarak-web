@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { site, siteUrl } from "@/lib/site";
+import { siteKeywords } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -24,18 +25,7 @@ export const metadata: Metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
-  keywords: [
-    "rumah quran",
-    "halaqah quran",
-    "les mengaji anak",
-    "kelas mengaji dewasa",
-    "tahfidz anak",
-    "program intensif hafalan",
-    "mutabaah digital",
-    "absensi santri digital",
-    "guru ngaji",
-    "belajar tajwid",
-  ],
+  keywords: [...siteKeywords],
   authors: [{ name: site.name }],
   creator: site.name,
   publisher: site.name,

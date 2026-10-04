@@ -23,11 +23,12 @@ export function About() {
                 Kami percaya Al-Qur&rsquo;an paling mudah dicintai lewat
                 bimbingan yang sabar dan suasana belajar yang nyaman. Setiap
                 santri dibimbing sesuai kemampuannya, mulai dari mengenal huruf
-                hijaiyah sampai memperbaiki bacaan dan menambah hafalan.
+                hijaiyah sampai tahsin bacaan dan tahfidz Al-Qur&rsquo;an.
               </p>
               <p>
                 Pengajar kami fokus pada satu hal: mendampingi. Urusan
-                pencatatan kami serahkan pada sistem digital.
+                pencatatan kami serahkan pada mutaba&rsquo;ah digital yang bisa
+                dipantau orang tua.
               </p>
             </div>
           </div>

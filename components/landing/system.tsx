@@ -21,7 +21,7 @@ export function System() {
             <SectionHeading
               id="judul-sistem"
               title="Sistem Absensi, Mutaba'ah Digital"
-              description="Pengajar mencatat kehadiran dan capaian santri langsung dari ponsel, sehingga waktu lebih banyak untuk mengajar."
+              description="Pengajar mencatat kehadiran dan capaian santri langsung dari ponsel — tersusun otomatis menjadi rapor hafalan santri — sehingga waktu lebih banyak untuk mengajar."
             />
           </Reveal>
         </div>

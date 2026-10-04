@@ -9,7 +9,7 @@ export const site = {
   name: "Rumah Qur'an Mubarak",
   tagline: "Menjadi Keluarga Allah Dengan Al-Qur'an",
   description:
-    "Rumah Qur'an Mubarak menemani anak hingga dewasa membaca dan menghafal Al-Qur'an dalam halaqah yang hangat, dengan catatan kemajuan yang rapi.",
+    "Rumah Qur'an Mubarak adalah tempat les mengaji anak hingga tahsin dewasa: membaca dan menghafal Al-Qur'an dalam halaqah yang hangat, dengan mutaba'ah digital dan rapor hafalan yang rapi untuk orang tua.",
   locale: "id_ID",
   phone: "+62 895-0000-0000",
   email: "admin@rqmubarak.lalululu",

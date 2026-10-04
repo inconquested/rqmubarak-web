@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { Reveal } from "@/components/landing/reveal";
+import { Reveal, ScrollReveal } from "@/components/landing/reveal";
 import { SectionHeading } from "@/components/landing/section-heading";
 import { Card, IconTile } from "@/components/ui/card";
 import { PROGRAMS } from "@/lib/landing";
@@ -16,13 +16,13 @@ export function Programs() {
           <SectionHeading
             id="judul-program"
             title="Program Halaqah"
-            description="Tiga kelas dengan ritme berbeda. Pilih yang paling sesuai dengan kebutuhan Anda"
+            description="Tiga kelas halaqah Qur'an dengan ritme berbeda — dari les mengaji anak hingga tahsin dewasa. Pilih yang paling sesuai dengan kebutuhan Anda"
           />
         </Reveal>
       </div>
       <div className="mt-6 grid gap-4 sm:mt-10 sm:gap-5 md:grid-cols-3">
         {PROGRAMS.map((program, i) => (
-          <Reveal key={program.title} delay={i * 0.06}>
+          <ScrollReveal key={program.title} delay={i * 120} className="h-full">
             <Card className="lift flex h-full flex-col p-4 sm:p-6">
               <IconTile className="lift-icon size-10 sm:size-11 [&_svg]:size-4 sm:[&_svg]:size-5">
                 <program.icon aria-hidden />
@@ -44,7 +44,7 @@ export function Programs() {
                 <ArrowRight className="nudge-target size-3.5" aria-hidden />
               </a>
             </Card>
-          </Reveal>
+          </ScrollReveal>
         ))}
       </div>
     </section>
