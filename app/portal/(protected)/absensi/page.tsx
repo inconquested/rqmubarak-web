@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox, DatePicker, EnumSelect } from "@/components/portal/fields";
+import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
 import { ABSENSI_STATUS, dayKey, enumOptions, fmtTanggal, rangeTanggal } from "@/lib/portal";
 import { deleteAbsensi, upsertAbsensi } from "@/lib/actions";
@@ -101,7 +102,7 @@ export default async function AbsensiPage({
         <h2 className="font-display text-[15px] font-semibold">
           {editing ? "Ubah absensi" : "Catat absensi"}
         </h2>
-        <form action={upsertAbsensi} className="mt-3 grid gap-3 sm:grid-cols-3">
+        <OfflineForm resource="absensi" op="upsert" action={upsertAbsensi} className="mt-3 grid gap-3 sm:grid-cols-3">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
           <Field label="Santri">
             <Combobox
@@ -141,7 +142,7 @@ export default async function AbsensiPage({
               </a>
             ) : null}
           </div>
-        </form>
+        </OfflineForm>
       </Card>
 
       <Card className="p-4 sm:p-5">
@@ -174,10 +175,10 @@ export default async function AbsensiPage({
                       <a href={`/portal/absensi?dari=${dari}&sampai=${sampai}&edit=${r.id}`}>
                         <Button variant="ghost" size="sm" type="button">Ubah</Button>
                       </a>
-                      <form action={deleteAbsensi}>
+                      <OfflineForm resource="absensi" op="delete" action={deleteAbsensi}>
                         <input type="hidden" name="id" value={r.id} />
                         <DeleteButton message="Hapus baris absensi ini?" />
-                      </form>
+                      </OfflineForm>
                     </div>
                   </TableCell>
                 </TableRow>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
+import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
 import { deleteMengajar, upsertMengajar } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -38,7 +39,7 @@ export default async function MengajarPage({
 
       <Card className="p-4 sm:p-5">
         <h2 className="font-display text-[15px] font-semibold">Tambah penugasan</h2>
-        <form action={upsertMengajar} className="mt-3 grid gap-3 sm:grid-cols-3">
+        <OfflineForm resource="mengajar" op="upsert" action={upsertMengajar} className="mt-3 grid gap-3 sm:grid-cols-3">
           <Field label="Pengajar">
             <Combobox
               name="pengajar_id"
@@ -59,7 +60,7 @@ export default async function MengajarPage({
           <div className="flex items-end">
             <Button type="submit" size="sm">Tugaskan</Button>
           </div>
-        </form>
+        </OfflineForm>
       </Card>
 
       <Card className="p-4 sm:p-5">
@@ -78,10 +79,10 @@ export default async function MengajarPage({
                   <TableCell className="font-medium">{r.pengajar?.nama_lengkap ?? "—"}</TableCell>
                   <TableCell>{r.kelas?.nama_kelas ?? "—"}</TableCell>
                   <TableCell className="text-right">
-                    <form action={deleteMengajar}>
+                    <OfflineForm resource="mengajar" op="delete" action={deleteMengajar}>
                       <input type="hidden" name="id" value={r.id} />
                       <DeleteButton label="Lepas" message="Lepas penugasan ini?" />
-                    </form>
+                    </OfflineForm>
                   </TableCell>
                 </TableRow>
               ))}

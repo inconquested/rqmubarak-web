@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox, EnumSelect } from "@/components/portal/fields";
+import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
 import { MUTABAAH_JENIS, MUTABAAH_NILAI, capaian, enumOptions, humanize } from "@/lib/portal";
 import { deleteMutabaah, upsertMutabaah } from "@/lib/actions";
@@ -79,7 +80,7 @@ export default async function SetoranPage({
         <h2 className="font-display text-[15px] font-semibold">
           {editing ? "Ubah setoran" : "Catat setoran"}
         </h2>
-        <form action={upsertMutabaah} className="mt-3 grid gap-3 sm:grid-cols-3">
+        <OfflineForm resource="mutabaah" op="upsert" action={upsertMutabaah} className="mt-3 grid gap-3 sm:grid-cols-3">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
           <Field label="Santri">
             <Combobox
@@ -126,7 +127,7 @@ export default async function SetoranPage({
               </a>
             ) : null}
           </div>
-        </form>
+        </OfflineForm>
       </Card>
 
       <Card className="p-4 sm:p-5">
@@ -157,10 +158,10 @@ export default async function SetoranPage({
                       <a href={`/portal/setoran?edit=${r.id}`}>
                         <Button variant="ghost" size="sm" type="button">Ubah</Button>
                       </a>
-                      <form action={deleteMutabaah}>
+                      <OfflineForm resource="mutabaah" op="delete" action={deleteMutabaah}>
                         <input type="hidden" name="id" value={r.id} />
                         <DeleteButton message="Hapus baris setoran ini?" />
-                      </form>
+                      </OfflineForm>
                     </div>
                   </TableCell>
                 </TableRow>

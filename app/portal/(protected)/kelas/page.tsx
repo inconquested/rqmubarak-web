@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { EnumSelect } from "@/components/portal/fields";
+import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
 import { deleteKelas, upsertKelas } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -37,7 +38,7 @@ export default async function KelasPage({
         <h2 className="font-display text-[15px] font-semibold">
           {editing ? "Ubah kelas" : "Tambah kelas"}
         </h2>
-        <form action={upsertKelas} className="mt-3 grid gap-3 sm:grid-cols-3">
+        <OfflineForm resource="kelas" op="upsert" action={upsertKelas} className="mt-3 grid gap-3 sm:grid-cols-3">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
           <Field label="Jenjang">
             <EnumSelect
@@ -60,7 +61,7 @@ export default async function KelasPage({
               </a>
             ) : null}
           </div>
-        </form>
+        </OfflineForm>
       </Card>
 
       <Card className="p-4 sm:p-5">
@@ -85,10 +86,10 @@ export default async function KelasPage({
                       <a href={`/portal/kelas?edit=${r.id}`}>
                         <Button variant="ghost" size="sm" type="button">Ubah</Button>
                       </a>
-                      <form action={deleteKelas}>
+                      <OfflineForm resource="kelas" op="delete" action={deleteKelas}>
                         <input type="hidden" name="id" value={r.id} />
                         <DeleteButton message="Hapus kelas ini? Santri & penugasan terkait ikut terhapus (cascade)." />
-                      </form>
+                      </OfflineForm>
                     </div>
                   </TableCell>
                 </TableRow>

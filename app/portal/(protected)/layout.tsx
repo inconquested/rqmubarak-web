@@ -4,6 +4,7 @@ import { signOut } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { SetupNotice } from "@/components/portal/ui";
+import { OfflineProvider } from "@/components/portal/offline";
 import { PortalShell } from "@/components/portal/sidebar";
 
 /**
@@ -58,5 +59,9 @@ export default async function ProtectedLayout({
     );
   }
 
-  return <PortalShell nama={me.nama_lengkap}>{children}</PortalShell>;
+  return (
+    <PortalShell nama={me.nama_lengkap}>
+      <OfflineProvider>{children}</OfflineProvider>
+    </PortalShell>
+  );
 }

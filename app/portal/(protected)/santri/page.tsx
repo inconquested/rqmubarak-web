@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
+import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
 import { deleteSantri, upsertSantri } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -52,7 +53,7 @@ export default async function SantriPage({
         <h2 className="font-display text-[15px] font-semibold">
           {editing ? "Ubah santri" : "Tambah santri"}
         </h2>
-        <form action={upsertSantri} className="mt-3 grid gap-3 sm:grid-cols-2">
+        <OfflineForm resource="santri" op="upsert" action={upsertSantri} className="mt-3 grid gap-3 sm:grid-cols-2">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
           <Field label="Nama">
             <Input name="nama" required defaultValue={editing?.nama ?? ""} />
@@ -80,7 +81,7 @@ export default async function SantriPage({
               </a>
             ) : null}
           </div>
-        </form>
+        </OfflineForm>
       </Card>
 
       <Card className="p-4 sm:p-5">
@@ -109,10 +110,10 @@ export default async function SantriPage({
                       <a href={`/portal/santri?edit=${r.id}`}>
                         <Button variant="ghost" size="sm" type="button">Ubah</Button>
                       </a>
-                      <form action={deleteSantri}>
+                      <OfflineForm resource="santri" op="delete" action={deleteSantri}>
                         <input type="hidden" name="id" value={r.id} />
                         <DeleteButton message={`Hapus ${r.nama} beserta seluruh riwayat absensi & setorannya?`} />
-                      </form>
+                      </OfflineForm>
                     </div>
                   </TableCell>
                 </TableRow>

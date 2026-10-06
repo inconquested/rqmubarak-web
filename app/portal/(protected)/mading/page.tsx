@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
+import { OfflineForm } from "@/components/portal/offline";
 import { MadingImageField } from "@/components/portal/mading-image";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
 import { deleteMading, upsertMading } from "@/lib/actions";
@@ -47,7 +48,7 @@ export default async function MadingPage({
         <h2 className="font-display text-[15px] font-semibold">
           {editing ? "Ubah konten" : "Tambah konten"}
         </h2>
-        <form action={upsertMading} className="mt-3 grid gap-3 sm:grid-cols-2">
+        <OfflineForm resource="mading" op="upsert" action={upsertMading} className="mt-3 grid gap-3 sm:grid-cols-2">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
           <Field label="Judul">
             <Input name="judul" required defaultValue={editing?.judul ?? ""} />
@@ -78,7 +79,7 @@ export default async function MadingPage({
               </a>
             ) : null}
           </div>
-        </form>
+        </OfflineForm>
       </Card>
 
       <Card className="p-4 sm:p-5">
@@ -108,10 +109,10 @@ export default async function MadingPage({
                       <a href={`/portal/mading?edit=${r.id}`}>
                         <Button variant="ghost" size="sm" type="button">Ubah</Button>
                       </a>
-                      <form action={deleteMading}>
+                      <OfflineForm resource="mading" op="delete" action={deleteMading}>
                         <input type="hidden" name="id" value={r.id} />
                         <DeleteButton message={`Hapus "${r.judul ?? "konten ini"}"?`} />
-                      </form>
+                      </OfflineForm>
                     </div>
                   </TableCell>
                 </TableRow>
