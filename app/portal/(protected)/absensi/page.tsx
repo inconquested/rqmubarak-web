@@ -11,8 +11,8 @@ import {
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox, DatePicker, EnumSelect } from "@/components/portal/fields";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
-import { ABSENSI_STATUS, dayKey, fmtTanggal, rangeTanggal } from "@/lib/portal";
-import { deleteAbsensi, upsertAbsensi } from "@/lib/portal-actions";
+import { ABSENSI_STATUS, dayKey, enumOptions, fmtTanggal, rangeTanggal } from "@/lib/portal";
+import { deleteAbsensi, upsertAbsensi } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Absensi, Kelas, Pengguna, Santri } from "@/lib/portal";
 
@@ -67,10 +67,10 @@ export default async function AbsensiPage({
       <Card className="p-4 sm:p-5">
         <form method="get" className="grid grid-cols-2 items-end gap-3 sm:flex sm:flex-wrap">
           <Field label="Dari" className="col-span-1">
-            <DatePicker name="dari" defaultValue={dari} allowClear className="w-full sm:w-auto" />
+            <DatePicker name="dari" defaultValue={dari} allowClear className="w-full sm:w-44" />
           </Field>
           <Field label="Sampai" className="col-span-1">
-            <DatePicker name="sampai" defaultValue={sampai} allowClear className="w-full sm:w-auto" />
+            <DatePicker name="sampai" defaultValue={sampai} allowClear className="w-full sm:w-44" />
           </Field>
           <Field label="Kelas">
             <EnumSelect
@@ -86,7 +86,7 @@ export default async function AbsensiPage({
               name="status"
               defaultValue={sp.status ?? ""}
               allowEmpty
-              options={ABSENSI_STATUS}
+              options={enumOptions(ABSENSI_STATUS)}
               className="w-full sm:w-32"
             />
           </Field>
@@ -120,7 +120,7 @@ export default async function AbsensiPage({
             />
           </Field>
           <Field label="Status">
-            <EnumSelect name="status" defaultValue={editing?.status ?? "hadir"} options={ABSENSI_STATUS} />
+            <EnumSelect name="status" defaultValue={editing?.status ?? "hadir"} options={enumOptions(ABSENSI_STATUS)} />
           </Field>
           <Field label="Pengajar pencatat" className="sm:col-span-3">
             <Combobox

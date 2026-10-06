@@ -12,9 +12,10 @@ import {
 import { DeleteButton } from "@/components/portal/delete-button";
 import { EnumSelect } from "@/components/portal/fields";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
-import { deletePengguna, upsertPengguna } from "@/lib/portal-actions";
+import { deletePengguna, upsertPengguna } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Pengguna } from "@/lib/portal";
+import { enumOptions, PERAN_PENGGUNA } from "@/lib/portal";
 
 export default async function PenggunaPage({
   searchParams,
@@ -65,11 +66,7 @@ export default async function PenggunaPage({
               <EnumSelect
                 name="peran"
                 defaultValue={editing?.peran ?? "pengajar"}
-                options={[
-                  { value: "pengajar", label: "Pengajar" },
-                  { value: "pemilik", label: "Pemilik" },
-                  { value: "tak_dikenal", label: "Tak dikenal" },
-                ]}
+                options={enumOptions(PERAN_PENGGUNA)}
               />
             </Field>
             <Field label="Status">

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { uploadMadingImage } from "@/lib/portal-actions";
+import { uploadMadingImage } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 
 const MAX_SIDE = 1280;

@@ -12,8 +12,8 @@ import {
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox, EnumSelect } from "@/components/portal/fields";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
-import { MUTABAAH_JENIS, MUTABAAH_NILAI, capaian, humanize } from "@/lib/portal";
-import { deleteMutabaah, upsertMutabaah } from "@/lib/portal-actions";
+import { MUTABAAH_JENIS, MUTABAAH_NILAI, capaian, enumOptions, humanize } from "@/lib/portal";
+import { deleteMutabaah, upsertMutabaah } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Mutabaah, Pengguna, Santri } from "@/lib/portal";
 
@@ -63,7 +63,7 @@ export default async function SetoranPage({
               name="jenis"
               defaultValue={sp.jenis ?? ""}
               allowEmpty
-              options={MUTABAAH_JENIS}
+              options={enumOptions(MUTABAAH_JENIS)}
               className="w-full sm:w-36"
             />
           </Field>
@@ -95,7 +95,7 @@ export default async function SetoranPage({
             <EnumSelect name="jenis" defaultValue={editing?.jenis ?? "ziyadah"} options={MUTABAAH_JENIS} />
           </Field>
           <Field label="Nilai">
-            <EnumSelect name="nilai" defaultValue={editing?.nilai ?? "jayyid"} options={MUTABAAH_NILAI} />
+            <EnumSelect name="nilai" defaultValue={editing?.nilai ?? "jayyid"} options={enumOptions(MUTABAAH_NILAI)} />
           </Field>
           <Field label="Pengajar (opsional)">
             <Combobox

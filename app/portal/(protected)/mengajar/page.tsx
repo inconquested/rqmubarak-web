@@ -11,7 +11,7 @@ import {
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
-import { deleteMengajar, upsertMengajar } from "@/lib/portal-actions";
+import { deleteMengajar, upsertMengajar } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Kelas, Mengajar, Pengguna } from "@/lib/portal";
 

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { signOut } from "@/lib/portal-actions";
+import { signOut } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { SetupNotice } from "@/components/portal/ui";

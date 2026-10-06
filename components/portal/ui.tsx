@@ -119,7 +119,7 @@ export function Field({
   className?: string;
 }) {
   return (
-    <div className={cn("space-y-1.5", className)}>
+    <div className={cn("min-w-0 space-y-1.5", className)}>
       <Label className="text-[13px] text-[#4b5b4f]">{label}</Label>
       {children}
     </div>

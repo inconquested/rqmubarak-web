@@ -14,7 +14,7 @@ import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
 import { MadingImageField } from "@/components/portal/mading-image";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
-import { deleteMading, upsertMading } from "@/lib/portal-actions";
+import { deleteMading, upsertMading } from "@/lib/actions";
 import { fmtTanggal } from "@/lib/portal";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { MadingKonten, Pengguna } from "@/lib/portal";

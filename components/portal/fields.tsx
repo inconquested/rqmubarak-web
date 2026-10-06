@@ -22,11 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { humanize, type Option } from "@/lib/portal";
 
-export type Option = { value: string; label: string };
+export type { Option };
 
 const triggerCls =
-  "flex h-8 w-full items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent px-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground [&_svg]:shrink-0";
+  "flex h-8 w-full min-w-0 items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent px-2.5 text-sm transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30 [&_svg]:shrink-0";
 
 /** Pilihan enum pendek — pengganti <select> native. Tulis ke form via hidden input bawaan. */
 export function EnumSelect({
@@ -49,18 +50,28 @@ export function EnumSelect({
   className?: string;
 }) {
   const opts = options.map((o) =>
-    typeof o === "string" ? { value: o, label: o } : o,
+    typeof o === "string" ? { value: o, label: humanize(o) } : o,
   );
+  // Label trigger di-resolve manual via children-fn: Base UI hanya tahu label
+  // dari item yang sudah mount (popup tertutup = fallback ke raw value).
   return (
     <Select name={name} defaultValue={defaultValue} required={required}>
-      <SelectTrigger className={cn("w-full", className)}>
-        <SelectValue placeholder={placeholder} />
+      <SelectTrigger className={cn("w-full min-w-0", className)}>
+        <SelectValue placeholder={placeholder}>
+          {(v: string | null) => {
+            const key = v ?? "";
+            return (
+              opts.find((o) => o.value === key)?.label ??
+              (key === "" && allowEmpty ? emptyLabel : placeholder)
+            );
+          }}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {allowEmpty ? <SelectItem value="">{emptyLabel}</SelectItem> : null}
         {opts.map((o) => (
           <SelectItem key={o.value} value={o.value}>
-            <span className="capitalize">{o.label}</span>
+            {o.label}
           </SelectItem>
         ))}
       </SelectContent>
@@ -97,7 +108,7 @@ export function Combobox({
       <>
         <input type="hidden" name={name} value="" />
         <button type="button" disabled className={cn(triggerCls, "opacity-50", className)}>
-          <span className="truncate text-muted-foreground">Belum ada data</span>
+          <span className="min-w-0 flex-1 truncate text-left text-muted-foreground">Belum ada data</span>
           <ChevronsUpDownIcon className="size-4 text-muted-foreground" aria-hidden />
         </button>
       </>
@@ -105,7 +116,7 @@ export function Combobox({
   }
 
   return (
-    <div className={className}>
+    <div className={cn("w-full min-w-0", className)}>
       <input type="hidden" name={name} value={value} required={required && !value} />
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
@@ -116,12 +127,12 @@ export function Combobox({
               aria-label={placeholder}
               className={cn(triggerCls, !selected && "text-muted-foreground")}
             >
-              <span className="truncate">{selected?.label ?? placeholder}</span>
+              <span className="min-w-0 flex-1 truncate text-left">{selected?.label ?? placeholder}</span>
               <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
             </button>
           }
         />
-        <PopoverContent align="start" sideOffset={4} className="w-72 p-0">
+        <PopoverContent align="start" sideOffset={4} className="w-(--anchor-width) min-w-56 p-1">
           <Command>
             <CommandInput placeholder={searchPlaceholder} />
             <CommandList>
@@ -130,10 +141,9 @@ export function Combobox({
                 {options.map((o) => (
                   <CommandItem
                     key={o.value}
-                    value={o.value}
-                    keywords={[o.label]}
-                    onSelect={(v) => {
-                      setValue(v);
+                    value={o.label}
+                    onSelect={() => {
+                      setValue(o.value);
                       setOpen(false);
                     }}
                   >
@@ -185,7 +195,7 @@ export function DatePicker({
     defaultValue ? new Date(`${defaultValue}T00:00:00`) : undefined,
   );
   return (
-    <div className={cn("flex gap-1.5", className)}>
+    <div className={cn("flex w-full min-w-0 gap-1.5", className)}>
       <input type="hidden" name={name} value={date ? toISODate(date) : ""} />
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
@@ -196,7 +206,7 @@ export function DatePicker({
               aria-label={placeholder}
               className={cn(triggerCls, "flex-1", !date && "text-muted-foreground")}
             >
-              <span className="flex items-center gap-2 truncate">
+              <span className="flex min-w-0 flex-1 items-center gap-2 truncate text-left">
                 <CalendarIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                 {date ? formatID(date) : placeholder}
               </span>
@@ -218,9 +228,10 @@ export function DatePicker({
       {allowClear && date ? (
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           type="button"
           aria-label="Hapus tanggal"
+          className="shrink-0"
           onClick={() => setDate(undefined)}
         >
           <XIcon className="size-3.5" aria-hidden />

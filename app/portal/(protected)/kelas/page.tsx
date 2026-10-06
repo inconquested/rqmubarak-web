@@ -12,9 +12,9 @@ import {
 import { DeleteButton } from "@/components/portal/delete-button";
 import { EnumSelect } from "@/components/portal/fields";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
-import { deleteKelas, upsertKelas } from "@/lib/portal-actions";
+import { deleteKelas, upsertKelas } from "@/lib/actions";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { humanize } from "@/lib/portal";
+import { enumOptions, humanize, KELAS_JENJANG } from "@/lib/portal";
 import type { Kelas } from "@/lib/portal";
 
 export default async function KelasPage({
@@ -43,11 +43,7 @@ export default async function KelasPage({
             <EnumSelect
               name="jenjang"
               defaultValue={editing?.jenjang ?? "reguler"}
-              options={[
-                { value: "reguler", label: "Reguler" },
-                { value: "intensif", label: "Intensif" },
-                { value: "dewasa", label: "Dewasa" },
-              ]}
+              options={enumOptions(KELAS_JENJANG)}
             />
           </Field>
           <Field label="Nama kelas">

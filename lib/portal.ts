@@ -85,6 +85,14 @@ export const MUTABAAH_JENIS: MutabaahJenis[] = ["ziyadah", "murajaah"];
 export const MUTABAAH_NILAI: MutabaahNilai[] = ["mumtaz", "jayyid", "maqbul"];
 export const PERAN_PENGGUNA = ["pemilik", "pengajar", "tak_dikenal"] as const;
 
+export type Option = { value: string; label: string };
+
+/** Mapper enum → opsi dropdown: value tetap lowercase apa adanya,
+ *  label tampil kapital natural (tak_dikenal → Tak Dikenal). */
+export function enumOptions(values: readonly string[]): Option[] {
+  return values.map((v) => ({ value: v, label: humanize(v) }));
+}
+
 export const PORTAL_NAV = [
   { href: "/portal", label: "Monitoring" },
   { href: "/portal/absensi", label: "Rekap Absensi" },

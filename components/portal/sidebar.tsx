@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PORTAL_NAV } from "@/lib/portal";
-import { signOut } from "@/lib/portal-actions";
+import { signOut } from "@/lib/actions";
 
 const ICONS: Record<string, typeof LayoutDashboard> = {
   "/portal": LayoutDashboard,
