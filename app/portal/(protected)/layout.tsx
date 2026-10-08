@@ -60,7 +60,7 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <PortalShell nama={me.nama_lengkap}>
+    <PortalShell user={{ nama_lengkap: me.nama_lengkap, peran: me.peran }}>
       <OfflineProvider>{children}</OfflineProvider>
     </PortalShell>
   );

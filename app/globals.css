@@ -139,6 +139,12 @@
   ::selection {
     background: #cbdcc9;
   }
+  /* Indikator fokus keyboard yang selalu terlihat (WCAG 2.4.7).
+   * Cakup tautan + wilayah scrollable; kontrol form sudah punya ring sendiri. */
+  :is(a[href], summary, [tabindex="0"]):focus-visible {
+    outline: 2px solid #2f6b3a;
+    outline-offset: 2px;
+  }
 }
 
 @utility font-display {
@@ -363,4 +369,125 @@ details[open] .menu-panel {
   z-index: 2;
   background: #ffffff;
   box-shadow: 1px 0 0 0 #e7efe6;
+}
+
+/* === Cetak rapor: sembunyikan shell portal, tampilkan blok .rapor saja === */
+@media print {
+  /* Shell portal: sidebar desktop (aside) + tombol menu mobile (fixed). */
+  aside,
+  button.fixed,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset layout shell (gradient bg + padding main). */
+  body > div:has(> aside),
+  main {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  @page {
+    margin: 16mm 14mm;
+  }
+
+  .rapor {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12pt;
+    line-height: 1.45;
+    color: #000;
+  }
+
+  .rapor-header {
+    text-align: center;
+    border-bottom: 3px double #000;
+    padding-bottom: 8pt;
+    margin-bottom: 14pt;
+  }
+
+  .rapor-lembaga {
+    font-size: 15pt;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .rapor-header h1 {
+    font-size: 13pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 4pt;
+  }
+
+  .rapor-sub {
+    font-size: 11pt;
+    margin-top: 2pt;
+  }
+
+  .rapor-identitas {
+    margin-bottom: 14pt;
+    border-collapse: collapse;
+  }
+
+  .rapor-identitas td {
+    padding: 1.5pt 0;
+    vertical-align: top;
+  }
+
+  .rapor-identitas td:first-child {
+    width: 120pt;
+    font-weight: 700;
+  }
+
+  .rapor h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    margin: 12pt 0 6pt;
+    page-break-after: avoid;
+  }
+
+  .rapor-tabel {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+  }
+
+  .rapor-tabel th,
+  .rapor-tabel td {
+    border: 1px solid #000;
+    padding: 4pt 6pt;
+    text-align: left;
+  }
+
+  .rapor-tabel th {
+    background: #f0f0f0;
+    font-weight: 700;
+  }
+
+  .rapor-tabel tr {
+    page-break-inside: avoid;
+  }
+
+  .rapor-catatan {
+    font-size: 10.5pt;
+    margin-top: 6pt;
+  }
+
+  .rapor-ttd {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 28pt;
+    page-break-inside: avoid;
+    text-align: center;
+  }
+
+  .rapor-ttd .rapor-nama {
+    margin-top: 48pt;
+  }
 }

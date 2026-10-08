@@ -9,9 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DonutChart } from "@/components/portal/charts";
+import { PrintButton } from "@/components/portal/print-button";
 import { Empty, PageHeader, StatCard } from "@/components/portal/ui";
 import { ABSENSI_STATUS, MUTABAAH_JENIS, capaian, dayKey, fmtTanggal, humanize } from "@/lib/portal";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { site } from "@/lib/site";
 import type { Absensi, Mutabaah, Santri } from "@/lib/portal";
 
 /** Rapor per santri: profil + ringkasan absensi + riwayat setoran. */
@@ -33,13 +35,17 @@ export default async function RaporPage({
   const mut = (mutRes.data ?? []) as Mutabaah[];
   const hadir = abs.filter((a) => a.status === "hadir").length;
   const juzMax = mut.reduce((m, x) => Math.max(m, x.quran_juz ?? 0), 0);
+  const persenHadir = abs.length ? Math.round((hadir / abs.length) * 100) : 0;
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title={santri.nama}
-        description={`${santri.kelas?.nama_kelas ?? "Tanpa kelas"}${santri.no_telepon ? ` · ${santri.no_telepon}` : ""}${santri.alamat ? ` · ${santri.alamat}` : ""}`}
-      />
+      {/* Dashboard layar — disembunyikan saat cetak */}
+      <div className="space-y-5 print:hidden">
+        <PageHeader
+          title={santri.nama}
+          description={`${santri.kelas?.nama_kelas ?? "Tanpa kelas"}${santri.no_telepon ? ` · ${santri.no_telepon}` : ""}${santri.alamat ? ` · ${santri.alamat}` : ""}`}
+          action={<PrintButton />}
+        />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard
@@ -129,6 +135,104 @@ export default async function RaporPage({
           <div className="mt-3"><Empty /></div>
         )}
       </Card>
+      </div>
+
+      {/* Rapor cetak — hanya tampil di hasil print (gantikan dashboard + shell). */}
+      <div className="rapor hidden print:block">
+        <header className="rapor-header">
+          <p className="rapor-lembaga">{site.name}</p>
+          <h1>Laporan Perkembangan Santri</h1>
+          <p className="rapor-sub">Rapor Tahfizhul Qur'an</p>
+        </header>
+
+        <table className="rapor-identitas">
+          <tbody>
+            <tr>
+              <td>Nama Santri</td>
+              <td>: {santri.nama}</td>
+            </tr>
+            <tr>
+              <td>Kelas</td>
+              <td>
+                : {santri.kelas?.nama_kelas ?? "—"}
+                {santri.kelas?.jenjang ? ` (${humanize(santri.kelas.jenjang)})` : ""}
+              </td>
+            </tr>
+            {santri.alamat ? (
+              <tr>
+                <td>Alamat</td>
+                <td>: {santri.alamat}</td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+
+        <h2>A. Ringkasan Kehadiran</h2>
+        <table className="rapor-tabel">
+          <thead>
+            <tr>
+              <th>Hadir</th>
+              <th>Sakit</th>
+              <th>Izin</th>
+              <th>Alpa</th>
+              <th>Persentase Kehadiran</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{abs.filter((a) => a.status === "hadir").length}</td>
+              <td>{abs.filter((a) => a.status === "sakit").length}</td>
+              <td>{abs.filter((a) => a.status === "izin").length}</td>
+              <td>{abs.filter((a) => a.status === "alpa").length}</td>
+              <td>{abs.length ? `${persenHadir}%` : "—"}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>B. Capaian Tahfizh</h2>
+        {mut.length ? (
+          <table className="rapor-tabel">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Jenis</th>
+                <th>Capaian</th>
+                <th>Nilai</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mut.map((m, i) => (
+                <tr key={m.id}>
+                  <td>{i + 1}</td>
+                  <td>{humanize(m.jenis)}</td>
+                  <td>{capaian(m)}</td>
+                  <td>{humanize(m.nilai)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Belum ada setoran tercatat.</p>
+        )}
+        <p className="rapor-catatan">
+          Juz tertinggi: {juzMax ? `Juz ${juzMax}` : "—"} · Total setoran: {mut.length}
+        </p>
+
+        <footer className="rapor-ttd">
+          <div>
+            <p>Mengetahui,</p>
+            <p>Pemilik</p>
+            <p className="rapor-nama">( ………………………………… )</p>
+          </div>
+          <div>
+            <p>
+              ………………, {fmtTanggal(new Date().toISOString())}
+            </p>
+            <p>Pengajar</p>
+            <p className="rapor-nama">( ………………………………… )</p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
