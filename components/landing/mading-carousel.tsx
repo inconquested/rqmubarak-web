@@ -3,6 +3,7 @@
 import { useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -114,6 +115,10 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
     <div>
       <div
         ref={trackRef}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Daftar artikel mading"
+        tabIndex={0}
         className="no-scrollbar relative -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-2 pb-4 sm:mx-0 sm:px-0.5"
       >
         {items.map((m) => (
@@ -122,32 +127,39 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
             data-mading-card
             className="lift flex h-full w-full max-w-sm shrink-0 snap-start flex-col overflow-hidden basis-[82%] sm:basis-[48%] lg:basis-[32%]"
           >
-            {m.thumb_url ? (
-              <Image
-                src={m.thumb_url}
-                alt=""
-                width={640}
-                height={360}
-                sizes="(max-width: 640px) 82vw, (max-width: 1024px) 48vw, 400px"
-                loading="lazy"
-                draggable={false}
-                className="aspect-video w-full object-cover"
-              />
-            ) : null}
-            <div className="flex flex-1 flex-col p-4 sm:p-6">
-              <h3 className="font-display text-lg font-medium text-[#1d2b21]">
-                {m.judul ?? "Tanpa judul"}
-              </h3>
-              {m.deskripsi ? (
-                <p className="mt-2 line-clamp-2 flex-1 text-[13px] leading-relaxed text-[#6b7a6e]">
-                  {m.deskripsi}
-                </p>
+            <Link
+              href={`/mading/${m.id}`}
+              prefetch
+              aria-label={`Baca: ${m.judul ?? "artikel tanpa judul"}`}
+              className="group flex flex-1 flex-col"
+            >
+              {m.thumb_url ? (
+                <Image
+                  src={m.thumb_url}
+                  alt={m.judul ?? ""}
+                  width={640}
+                  height={360}
+                  sizes="(max-width: 640px) 82vw, (max-width: 1024px) 48vw, 400px"
+                  loading="lazy"
+                  draggable={false}
+                  className="aspect-video w-full object-cover"
+                />
               ) : null}
-              <p className="mt-3 text-[12px] text-[#6b7a6e]">
-                {fmtTanggal(m.created_at.slice(0, 10))}
-                {m.penulis_ref?.nama_lengkap ? ` · ${m.penulis_ref.nama_lengkap}` : ""}
-              </p>
-            </div>
+              <div className="flex flex-1 flex-col p-4 sm:p-6">
+                <h3 className="font-display text-lg font-medium text-[#1d2b21] group-hover:underline">
+                  {m.judul ?? "Tanpa judul"}
+                </h3>
+                {m.deskripsi ? (
+                  <p className="mt-2 line-clamp-2 flex-1 text-[13px] leading-relaxed text-[#6b7a6e]">
+                    {m.deskripsi}
+                  </p>
+                ) : null}
+                <p className="mt-3 text-[12px] text-[#6b7a6e]">
+                  {fmtTanggal(m.created_at.slice(0, 10))}
+                  {m.penulis_ref?.nama_lengkap ? ` · ${m.penulis_ref.nama_lengkap}` : ""}
+                </p>
+              </div>
+            </Link>
           </Card>
         ))}
       </div>

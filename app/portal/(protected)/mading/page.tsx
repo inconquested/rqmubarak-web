@@ -97,7 +97,9 @@ export default async function MadingPage({
               {rows.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell>
-                    <p className="font-medium">{r.judul ?? "—"}</p>
+                    <a href={`/portal/mading/${r.id}`} className="font-medium hover:underline">
+                      {r.judul ?? "—"}
+                    </a>
                     {r.deskripsi ? (
                       <p className="line-clamp-1 text-[12px] text-[#6b7a6e]">{r.deskripsi}</p>
                     ) : null}
