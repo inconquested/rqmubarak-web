@@ -1,7 +1,7 @@
+import { AlignLeft, Check, FileText, Heading, Image, Pencil, PenLine, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -11,9 +11,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { Combobox } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
 import { MadingImageField } from "@/components/portal/mading-image";
+import { RichEditor } from "@/components/portal/rich-editor";
 import { Empty, Field, FormNotice, PageHeader } from "@/components/portal/ui";
 import { deleteMading, upsertMading } from "@/lib/actions";
 import { fmtTanggal } from "@/lib/portal";
@@ -23,7 +25,7 @@ import type { MadingKonten, Pengguna } from "@/lib/portal";
 export default async function MadingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ok?: string; error?: string; edit?: string }>;
+  searchParams: Promise<{ ok?: string; error?: string; edit?: string; tambah?: string }>;
 }) {
   const sp = await searchParams;
   const db = createAdminClient();
@@ -38,22 +40,27 @@ export default async function MadingPage({
   const rows = (res.data ?? []) as unknown as MadingKonten[];
   const penulis = (usersRes.data ?? []) as Pick<Pengguna, "id" | "nama_lengkap">[];
   const editing = sp.edit ? rows.find((r) => r.id === sp.edit) : undefined;
+  const showForm = Boolean(editing || sp.tambah);
 
   return (
     <div className="space-y-5">
       <PageHeader title="Mading" description="Konten papan informasi (ref: refs/schema.sql)." />
       <FormNotice ok={sp.ok} error={sp.error} />
 
-      <Card className="p-4 sm:p-5">
-        <h2 className="font-display text-[15px] font-semibold">
-          {editing ? "Ubah konten" : "Tambah konten"}
-        </h2>
-        <OfflineForm resource="mading" op="upsert" action={upsertMading} className="mt-3 grid gap-3 sm:grid-cols-2">
+      <CrudForm
+        title={editing ? "Ubah konten" : "Tambah konten"}
+        fabLabel="Tambah konten"
+        closeHref="/portal/mading"
+        defaultOpen={showForm}
+        wide
+        expandable
+      >
+        <OfflineForm resource="mading" op="upsert" action={upsertMading} className="grid gap-3 sm:grid-cols-2">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
-          <Field label="Judul">
+          <Field label="Judul" icon={Heading}>
             <Input name="judul" required defaultValue={editing?.judul ?? ""} />
           </Field>
-          <Field label="Penulis (opsional)">
+          <Field label="Penulis (opsional)" icon={PenLine}>
             <Combobox
               name="penulis"
               defaultValue={editing?.penulis ?? ""}
@@ -62,25 +69,25 @@ export default async function MadingPage({
               options={penulis.map((p) => ({ value: p.id, label: p.nama_lengkap }))}
             />
           </Field>
-          <Field label="Deskripsi singkat" className="sm:col-span-2">
+          <Field label="Deskripsi singkat" className="sm:col-span-2" icon={AlignLeft}>
             <Input name="deskripsi" defaultValue={editing?.deskripsi ?? ""} />
           </Field>
-          <Field label="Isi" className="sm:col-span-2">
-            <Textarea name="konten" rows={4} defaultValue={editing?.konten ?? ""} />
+          <Field label="Isi" className="sm:col-span-2" icon={FileText}>
+            <RichEditor defaultValue={editing?.konten ?? ""} />
           </Field>
-          <Field label="Gambar sampul" className="sm:col-span-2">
+          <Field label="Gambar sampul" className="sm:col-span-2" icon={Image}>
             <MadingImageField defaultUrl={editing?.thumb_url ?? ""} />
           </Field>
           <div className="flex items-end gap-2">
-            <Button type="submit" size="sm">{editing ? "Simpan" : "Terbitkan"}</Button>
+            <Button type="submit" size="sm">{editing ? <Check aria-hidden /> : <Send aria-hidden />}{editing ? "Simpan" : "Terbitkan"}</Button>
             {editing ? (
               <a href="/portal/mading">
-                <Button variant="outline" size="sm" type="button">Batal</Button>
+                <Button variant="outline" size="sm" type="button"><X aria-hidden />Batal</Button>
               </a>
             ) : null}
           </div>
         </OfflineForm>
-      </Card>
+      </CrudForm>
 
       <Card className="p-4 sm:p-5">
         {rows.length ? (
@@ -109,7 +116,7 @@ export default async function MadingPage({
                   <TableCell className="text-right">
                     <div className="inline-flex gap-1">
                       <a href={`/portal/mading?edit=${r.id}`}>
-                        <Button variant="ghost" size="sm" type="button">Ubah</Button>
+                        <Button variant="ghost" size="sm" type="button"><Pencil aria-hidden />Ubah</Button>
                       </a>
                       <OfflineForm resource="mading" op="delete" action={deleteMading}>
                         <input type="hidden" name="id" value={r.id} />

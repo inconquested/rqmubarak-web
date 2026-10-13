@@ -50,7 +50,7 @@
 }
 
 :root {
-  /* Strong ease-out untuk interaksi UI (Emil: custom curve, bukan bawaan) */
+  /* Strong ease-out for UI interactions (Emil: custom curve, not the default) */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --background: oklch(1 0 0);
   --foreground: oklch(0.148 0.004 228.8);
@@ -139,8 +139,8 @@
   ::selection {
     background: #cbdcc9;
   }
-  /* Indikator fokus keyboard yang selalu terlihat (WCAG 2.4.7).
-   * Cakup tautan + wilayah scrollable; kontrol form sudah punya ring sendiri. */
+  /* Always-visible keyboard focus indicator (WCAG 2.4.7).
+   * Covers links + scrollable regions; form controls already have their own ring. */
   :is(a[href], summary, [tabindex="0"]):focus-visible {
     outline: 2px solid #2f6b3a;
     outline-offset: 2px;
@@ -156,7 +156,7 @@
 }
 
 @layer components {
-  /* State dasar (aman di semua perangkat; pemicu :hover digate di bawah) */
+  /* Base state (safe on all devices; :hover triggers gated below) */
   .lift {
     transition:
       transform 200ms var(--ease-out),
@@ -184,7 +184,7 @@
     transition: transform 200ms var(--ease-out);
   }
 
-  /* Hover hanya untuk pointer presisi: tanpa hover palsu yang lengket di sentuh */
+  /* Hover for precise pointers only: no sticky fake hover on touch */
   @media (hover: hover) and (pointer: fine) {
     .lift:hover {
       transform: translateY(-4px);
@@ -205,7 +205,7 @@
   }
 }
 
-/* Float dekoratif ornamen hero: transform-only, GPU-friendly */
+/* Decorative hero ornament float: transform-only, GPU-friendly */
 @keyframes drift {
   0%,
   100% {
@@ -216,7 +216,7 @@
   }
 }
 
-/* Dropdown menu mobile: jarang dibuka → boleh animasi; transform+opacity saja */
+/* Mobile dropdown menu: rarely opened → may animate; transform+opacity only */
 @keyframes menu-in {
   from {
     opacity: 0;
@@ -251,7 +251,7 @@ details[open] .menu-panel {
   animation: menu-in 200ms var(--ease-out);
 }
 
-/* Portal: notifikasi hasil aksi — slide+fade 200ms, jalan di main thread lepas */
+/* Portal: action-result notice — 200ms slide+fade, runs off the main thread */
 @keyframes notice-in {
   from {
     opacity: 0;
@@ -263,7 +263,7 @@ details[open] .menu-panel {
   animation: notice-in 200ms var(--ease-out);
 }
 
-/* Portal: skeleton loading — shimmer linear konstan */
+/* Portal: skeleton loading — constant linear shimmer */
 @keyframes shimmer {
   from {
     transform: translateX(-100%);
@@ -293,7 +293,7 @@ details[open] .menu-panel {
   animation: shimmer 1.6s linear infinite;
 }
 
-/* Scrollbar gaya aplikasi: tipis, thumb sage, track transparan */
+/* App-style scrollbar: thin, sage thumb, transparent track */
 * {
   scrollbar-width: thin;
   scrollbar-color: #bccfba transparent;
@@ -325,7 +325,7 @@ details[open] .menu-panel {
   background: transparent;
 }
 
-/* Rel geser tanpa thumb bar (carousel) — affordance dari tombol + snap */
+/* Slider rail without thumb bar (carousel) — affordance from buttons + snap */
 .no-scrollbar {
   scrollbar-width: none;
 }
@@ -334,9 +334,9 @@ details[open] .menu-panel {
   display: none;
 }
 
-/* Portal: tabel scroll horizontal di mobile — bayangan tepi penanda bisa
-   digeser + kolom pertama menempel. Murni CSS, tanpa JS. Menempel ke
-   scrollport bawaan shadcn ([data-slot="table-container"]). */
+/* Portal: horizontally scrolling table on mobile — edge shadows signal
+   scrollability + first column sticks. Pure CSS, no JS. Attaches to
+   shadcn's built-in scrollport ([data-slot="table-container"]). */
 [data-slot="table-container"] {
   overflow-x: auto;
   overscroll-behavior-x: contain;
@@ -371,16 +371,140 @@ details[open] .menu-panel {
   box-shadow: 1px 0 0 0 #e7efe6;
 }
 
-/* === Cetak rapor: sembunyikan shell portal, tampilkan blok .rapor saja === */
+/* === Dark theme: map the portal's hardcoded sage palette to dark surfaces ===
+   shadcn tokens (.dark on :root) already cover ui components; this block
+   handles remaining hardcoded hex colors so text stays readable. */
+.dark .bg-\[\#fbfdfb\],
+.dark .bg-\[\#fafcfa\] {
+  background-color: #0f1712;
+}
+.dark .bg-\[\#eef4ec\] {
+  background-color: #182420;
+}
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/75,
+.dark .bg-white\/60,
+.dark .bg-white\/90 {
+  background-color: #141f19;
+}
+.dark .text-\[\#1d2b21\] {
+  color: #e9f1ea;
+}
+.dark .text-\[\#4b5b4f\] {
+  color: #b3c6b8;
+}
+.dark .text-\[\#6b7a6e\] {
+  color: #8ba091;
+}
+.dark .text-\[\#2c4232\],
+.dark .text-\[\#3d4f42\] {
+  color: #cbdfd0;
+}
+.dark .text-\[\#2f6b3a\] {
+  color: #93c184;
+}
+.dark .text-\[\#7d9b84\] {
+  color: #86ab8d;
+}
+.dark .border-\[\#d8e2d6\] {
+  border-color: #2b3c31;
+}
+.dark .border-\[\#bccfba\] {
+  border-color: #3a5c44;
+}
+.dark .border-\[\#eef4ec\] {
+  border-color: #223028;
+}
+.dark .border-white\/60 {
+  border-color: rgb(255 255 255 / 0.12);
+}
+.dark .bg-\[\#cbdcc9\] {
+  background-color: #2e4a37;
+}
+.dark .bg-\[\#d5e3d3\] {
+  background-color: #2e4a37;
+}
+.dark .bg-\[\#e4eee2\] {
+  background-color: #223528;
+}
+.dark .hover\:bg-\[\#bccfba\]:hover {
+  background-color: #3a5c44;
+}
+.dark .hover\:bg-\[\#eef4ec\]:hover {
+  background-color: #1e2d24;
+}
+.dark .hover\:bg-\[\#fafcfa\]:hover {
+  background-color: #1e2d24;
+}
+.dark .hover\:bg-\[\#f2f7f1\]:hover {
+  background-color: #1e2d24;
+}
+.dark .bg-\[\#7d9b84\] {
+  background-color: #86ab8d;
+}
+.dark .decoration-\[\#bccfba\] {
+  text-decoration-color: #86ab8d;
+}
+.dark .group:hover .group-hover\:decoration-\[\#bccfba\] {
+  text-decoration-color: #86ab8d;
+}
+.dark [data-slot="table-container"] {
+  background:
+    linear-gradient(to right, #141f19 30%, rgba(20, 31, 25, 0)),
+    linear-gradient(to left, #141f19 30%, rgba(20, 31, 25, 0)) 100% 0,
+    radial-gradient(
+      farthest-side at 0% 50%,
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0)
+    ),
+    radial-gradient(
+      farthest-side at 100% 50%,
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0)
+    )
+      100% 0;
+  background-repeat: no-repeat;
+  background-size:
+    32px 100%,
+    32px 100%,
+    12px 100%,
+    12px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+.dark [data-slot="table-container"] :is(th, td):first-child {
+  background: #141f19;
+  box-shadow: 1px 0 0 0 #2b3c31;
+}
+.dark .recharts-cartesian-axis-tick text {
+  fill: #8ba091;
+}
+.dark .recharts-tooltip-cursor {
+  fill: rgb(255 255 255 / 0.07);
+}
+.dark .skeleton {
+  background: #182420;
+}
+.dark ::selection {
+  background: #33513b;
+}
+.dark * {
+  scrollbar-color: #33463a transparent;
+}
+.dark *::-webkit-scrollbar-thumb {
+  background: #33463a;
+}
+
+/* === Report print: hide portal shell, show only the .rapor block === */
 @media print {
-  /* Shell portal: sidebar desktop (aside) + tombol menu mobile (fixed). */
+  /* Portal shell: desktop sidebar (aside) + mobile menu button (fixed). */
   aside,
   button.fixed,
   .no-print {
     display: none !important;
   }
 
-  /* Reset layout shell (gradient bg + padding main). */
+  /* Reset shell layout (gradient bg + main padding). */
   body > div:has(> aside),
   main {
     background: #ffffff !important;

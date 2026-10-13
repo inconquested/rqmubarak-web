@@ -1,3 +1,5 @@
+import { GraduationCap, UserPlus, Users, X } from "lucide-react";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
@@ -80,18 +82,19 @@ export default async function MengajarPage({
           meta={`${rows.length} penugasan aktif`}
         />
 
-        {showForm ? (
-          <div className="mt-5 rounded-2xl border border-[#d8e2d6] bg-[#fafcfa] p-4 sm:p-5">
-            <h3 className="font-display text-[15px] font-semibold text-[#1d2b21]">
-              Tambah penugasan
-            </h3>
-            <OfflineForm
+        <CrudForm
+          title="Tambah penugasan"
+          fabLabel="Tambah penugasan"
+          closeHref="/portal/mengajar"
+          defaultOpen={showForm}
+        >
+          <OfflineForm
               resource="mengajar"
               op="upsert"
               action={upsertMengajar}
               className="mt-3 grid gap-3 sm:grid-cols-3"
             >
-              <Field label="Pengajar">
+              <Field label="Pengajar" icon={GraduationCap}>
                 <Combobox
                   name="pengajar_id"
                   required
@@ -103,7 +106,7 @@ export default async function MengajarPage({
                   }))}
                 />
               </Field>
-              <Field label="Kelas">
+              <Field label="Kelas" icon={Users}>
                 <Combobox
                   name="kelas_id"
                   placeholder="— Tanpa kelas —"
@@ -116,25 +119,18 @@ export default async function MengajarPage({
               </Field>
               <div className="flex items-end gap-2">
                 <Button type="submit" size="sm">
+                  <UserPlus aria-hidden />
                   Tugaskan
                 </Button>
                 <a href="/portal/mengajar">
                   <Button variant="outline" size="sm" type="button">
+                    <X aria-hidden />
                     Batal
                   </Button>
                 </a>
               </div>
             </OfflineForm>
-          </div>
-        ) : (
-          <div className="mt-5">
-            <a href="/portal/mengajar?tambah=1">
-              <Button type="button" size="sm">
-                + Tambah Penugasan
-              </Button>
-            </a>
-          </div>
-        )}
+        </CrudForm>
 
         <div className="mt-6">
           {rows.length ? (

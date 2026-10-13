@@ -1,6 +1,6 @@
 /**
- * Konfigurasi situs terpusat untuk SEO.
- * ponytail: ganti dengan domain produksi via env NEXT_PUBLIC_SITE_URL.
+ * Centralized site config for SEO.
+ * ponytail: replace with the production domain via env NEXT_PUBLIC_SITE_URL.
  */
 export const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://rqmubarak.web.id";

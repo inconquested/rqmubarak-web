@@ -5,7 +5,7 @@ import { Logo } from "@/components/landing/logo";
 import { getMading, MadingArticle } from "@/components/mading-article";
 import { site, siteUrl } from "@/lib/site";
 
-/** Artikel publik — di luar /portal, tanpa login. */
+/** Public article — outside /portal, no login. */
 export async function generateMetadata({
   params,
 }: {

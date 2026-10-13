@@ -1,8 +1,8 @@
 "use server";
 
-import { fail, idOrNull, ok, requirePemilik, str } from "./shared";
+import { fail, idOrNull, ok, requirePemilik, str } from "../shared";
 
-/* Master: santri */
+/* Master data: students */
 
 export async function upsertSantri(fd: FormData) {
   const returnTo = "/portal/santri";
@@ -21,14 +21,4 @@ export async function upsertSantri(fd: FormData) {
     : await db.from("santri").insert(payload);
   if (error) fail(returnTo, error.message);
   ok(returnTo, id ? "Data santri diperbarui." : "Santri ditambahkan.");
-}
-
-export async function deleteSantri(fd: FormData) {
-  const returnTo = "/portal/santri";
-  const { db } = await requirePemilik();
-  const id = str(fd, "id");
-  if (!id) fail(returnTo, "ID tidak valid.");
-  const { error } = await db.from("santri").delete().eq("id", id);
-  if (error) fail(returnTo, error.message);
-  ok(returnTo, "Santri dihapus beserta riwayatnya.");
 }

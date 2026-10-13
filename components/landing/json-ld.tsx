@@ -1,6 +1,6 @@
 import { site, siteUrl } from "@/lib/site";
 
-/** Structured data: organisasi pendidikan + situs. Cerminan konten terlihat. */
+/** Structured data: educational organization + site. Mirrors visible content. */
 export function JsonLd() {
   const data = {
     "@context": "https://schema.org",
@@ -48,7 +48,7 @@ export function JsonLd() {
   return (
     <script
       type="application/ld+json"
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: data JSON-LD statis milik sendiri, tanpa input pengguna
+      // biome-ignore lint/security/noDangerouslySetInnerHtml: first-party static JSON-LD data, no user input
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
   );

@@ -1,5 +1,5 @@
-/* Antrean offline-first: payload CRUD + flag `_pending` di localStorage.
- * Dipakai saat luring; dikirim ulang otomatis begitu daring kembali. */
+/* Offline-first queue: CRUD payloads + `_pending` flag in localStorage.
+ * Used while offline; resent automatically once back online. */
 
 export type OfflineResource =
   | "kelas"
@@ -18,7 +18,7 @@ export type OfflineOp = {
   op: OfflineOpKind;
   payload: Record<string, string>;
   createdAt: number;
-  /** Flag: tercatat lokal, belum terkirim ke server. */
+  /** Flag: recorded locally, not yet sent to the server. */
   _pending: true;
 };
 
@@ -46,7 +46,7 @@ function saveQueue(q: OfflineOp[]) {
   try {
     window.localStorage.setItem(KEY, JSON.stringify(q));
   } catch {
-    /* storage penuh/diblokir — antrean hilang, jangan crash form. */
+    /* storage full/blocked — queue is lost, don't crash the form. */
   }
   window.dispatchEvent(new Event(EVENT));
 }
@@ -60,7 +60,7 @@ export function enqueueOp(op: Omit<OfflineOp, "id" | "createdAt" | "_pending">) 
   saveQueue([...loadQueue(), { ...op, id: newId(), createdAt: Date.now(), _pending: true }]);
 }
 
-/** Keluarkan antrean paling depan (dipakai SEBELUM kirim → aman dari double-run). */
+/** Shift the front of the queue (call BEFORE sending → safe from double-run). */
 export function shiftQueue(): OfflineOp | undefined {
   const [head, ...rest] = loadQueue();
   if (!head) return undefined;
@@ -68,7 +68,7 @@ export function shiftQueue(): OfflineOp | undefined {
   return head;
 }
 
-/** Kembalikan op gagal ke depan antrean. */
+/** Push a failed op back to the front of the queue. */
 export function requeueFront(op: OfflineOp) {
   saveQueue([op, ...loadQueue()]);
 }
@@ -77,7 +77,7 @@ export function pendingCount() {
   return loadQueue().length;
 }
 
-/** Serialize FormData → object string. null bila ada File (tak bisa antre offline). */
+/** Serialize FormData → string object. null when it holds a File (can't queue offline). */
 export function formPayload(form: HTMLFormElement): Record<string, string> | null {
   const out: Record<string, string> = {};
   for (const [k, v] of new FormData(form).entries()) {

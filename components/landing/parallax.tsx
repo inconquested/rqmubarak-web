@@ -10,9 +10,9 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Parallax scroll berbasis motion value (tanpa re-render React).
- * speed 0.12 = latar jauh (lambat), negatif = counter-move (dekat).
- * Nonaktif total bila prefers-reduced-motion.
+ * Motion-value-based scroll parallax (no React re-renders).
+ * speed 0.12 = far background (slow), negative = counter-move (near).
+ * Fully disabled under prefers-reduced-motion.
  */
 export function Parallax({
   speed = 0.12,

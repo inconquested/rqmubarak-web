@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-/** Host Supabase dari env (build-time). Fallback wildcard bila env belum ada. */
+/** Supabase host from env (build-time). Wildcard fallback when env is missing. */
 const supabaseHost = (() => {
   try {
     const u = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // Logo publik: konten-hash tidak ada, beri immutable manual.
+        // Public logo: no content hash, so set immutable manually.
         source: "/logo-notext.svg",
         headers: [
           {

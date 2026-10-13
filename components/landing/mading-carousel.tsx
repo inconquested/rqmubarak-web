@@ -12,9 +12,9 @@ import type { MadingKonten } from "@/lib/portal";
 import { cn } from "@/lib/utils";
 
 /**
- * Carousel 2D + aksen 3D: skewX mengikuti kecepatan geser, tiap kartu
- * rotateY menjauhi tengah viewport. Murni transform/opacity, loop rAF
- * hanya hidup saat track bergerak. Mobile: 1 kartu + snap + swipe native.
+ * 2D carousel with 3D accents: skewX follows scroll velocity, each card
+ * rotates away from the viewport center. Transform/opacity only; the rAF loop
+ * runs only while the track moves. Mobile: 1 card + snap + native swipe.
  */
 export function MadingCarousel({ items }: { items: MadingKonten[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -31,8 +31,8 @@ export function MadingCarousel({ items }: { items: MadingKonten[] }) {
     let last = el.scrollLeft;
     let skew = 0;
     let idle: ReturnType<typeof setTimeout>;
-    // Ukuran layout di-cache — loop hanya baca scrollLeft (murah, tanpa
-    // reflow) dan tulis transform. Ukur ulang hanya saat ukuran berubah.
+    // Layout sizes are cached — the loop only reads scrollLeft (cheap, no
+    // reflow) and writes transforms. Re-measure only on resize.
     let vw = 1;
     let max = 0;
     let centers: number[] = [];

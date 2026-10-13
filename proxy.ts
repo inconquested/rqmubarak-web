@@ -3,7 +3,11 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 const PORTAL = /^\/portal(\/|$)/;
-const PUBLIC_PORTAL = ["/portal/login"];
+const PUBLIC_PORTAL = [
+  "/portal/login",
+  "/portal/lupa-password",
+  "/portal/update-password",
+];
 
 function robots(res: NextResponse) {
   res.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
@@ -12,7 +16,10 @@ function robots(res: NextResponse) {
 
 export async function proxy(req: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // .env.example uses PUBLISHABLE_KEY; the legacy ANON_KEY is still supported.
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return robots(NextResponse.next());
 
   let res = NextResponse.next({ request: req });
@@ -31,8 +38,8 @@ export async function proxy(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect harus membawa cookie sesi terbaru — kalau tidak, browser
-  // memakai token basi dan proxy/layout saling memantulkan (loop 307).
+  // Redirects must carry the latest session cookies — otherwise the browser
+  // uses a stale token and proxy/layout bounce off each other (307 loop).
   const redirectTo = (dest: URL) => {
     const r = NextResponse.redirect(dest);
     for (const c of res.cookies.getAll()) r.cookies.set(c.name, c.value);

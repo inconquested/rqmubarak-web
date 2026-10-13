@@ -29,8 +29,8 @@ function Enter({
 export function Hero() {
   return (
     <section id="atas" className="relative overflow-hidden">
-      {/* ornamen sesuai ref (latar di-root page agar menyatu dengan navbar) */}
-      {/* Lapisan depth: blob gerak lambat (jauh) di belakang konten */}
+      {/* Decorations per design ref (background lives at page root to blend with navbar) */}
+      {/* Depth layer: slow-moving far blob behind content */}
       <Parallax
         speed={0.18}
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(520px_340px_at_50%_18%,#cfdfcc_0%,transparent_70%)]"

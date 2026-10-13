@@ -1,3 +1,4 @@
+import { CalendarDays, Check, CircleDot, Filter, GraduationCap, Pencil, User, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -9,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { Combobox, DatePicker, EnumSelect } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
@@ -21,7 +23,7 @@ export default async function AbsensiPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    ok?: string; error?: string; edit?: string;
+    ok?: string; error?: string; edit?: string; tambah?: string;
     dari?: string; sampai?: string; kelas?: string; status?: string;
   }>;
 }) {
@@ -52,6 +54,7 @@ export default async function AbsensiPage({
   const kelas = (kelasRes.data ?? []) as Pick<Kelas, "id" | "nama_kelas">[];
   const pengajar = (pengajarRes.data ?? []) as Pick<Pengguna, "id" | "nama_lengkap">[];
   const editing = sp.edit ? semua.find((r) => r.id === sp.edit) : undefined;
+  const showForm = Boolean(editing || sp.tambah);
   const ringkas = ABSENSI_STATUS.map((s) => ({
     s,
     n: rows.filter((r) => r.status === s).length,
@@ -67,13 +70,13 @@ export default async function AbsensiPage({
 
       <Card className="p-4 sm:p-5">
         <form method="get" className="grid grid-cols-2 items-end gap-3 sm:flex sm:flex-wrap">
-          <Field label="Dari" className="col-span-1">
+          <Field label="Dari" className="col-span-1" icon={CalendarDays}>
             <DatePicker name="dari" defaultValue={dari} allowClear className="w-full sm:w-44" />
           </Field>
-          <Field label="Sampai" className="col-span-1">
+          <Field label="Sampai" className="col-span-1" icon={CalendarDays}>
             <DatePicker name="sampai" defaultValue={sampai} allowClear className="w-full sm:w-44" />
           </Field>
-          <Field label="Kelas">
+          <Field label="Kelas" icon={Users}>
             <EnumSelect
               name="kelas"
               defaultValue={sp.kelas ?? ""}
@@ -82,7 +85,7 @@ export default async function AbsensiPage({
               className="w-full sm:w-40"
             />
           </Field>
-          <Field label="Status">
+          <Field label="Status" icon={CircleDot}>
             <EnumSelect
               name="status"
               defaultValue={sp.status ?? ""}
@@ -91,20 +94,23 @@ export default async function AbsensiPage({
               className="w-full sm:w-32"
             />
           </Field>
-          <Button variant="outline" size="sm" type="submit" className="col-span-2 sm:col-span-1">Saring</Button>
+          <Button variant="outline" size="sm" type="submit" className="col-span-2 sm:col-span-1"><Filter aria-hidden />Saring</Button>
         </form>
         <p className="mt-3 text-[13px] capitalize text-[#6b7a6e]">
           {rows.length} baris · {ringkas.map((r) => `${r.s}: ${r.n}`).join(" · ")}
         </p>
       </Card>
 
-      <Card className="p-4 sm:p-5">
-        <h2 className="font-display text-[15px] font-semibold">
-          {editing ? "Ubah absensi" : "Catat absensi"}
-        </h2>
-        <OfflineForm resource="absensi" op="upsert" action={upsertAbsensi} className="mt-3 grid gap-3 sm:grid-cols-3">
+      <CrudForm
+        title={editing ? "Ubah absensi" : "Catat absensi"}
+        fabLabel="Catat absensi"
+        closeHref="/portal/absensi"
+        defaultOpen={showForm}
+        wide
+      >
+        <OfflineForm resource="absensi" op="upsert" action={upsertAbsensi} className="grid gap-3 sm:grid-cols-3">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
-          <Field label="Santri">
+          <Field label="Santri" icon={User}>
             <Combobox
               name="santri_id"
               required
@@ -114,16 +120,16 @@ export default async function AbsensiPage({
               options={santri.map((s) => ({ value: s.id, label: s.nama }))}
             />
           </Field>
-          <Field label="Tanggal">
+          <Field label="Tanggal" icon={CalendarDays}>
             <DatePicker
               name="tanggal"
               defaultValue={editing ? dayKey(editing.tanggal) : new Date().toISOString().slice(0, 10)}
             />
           </Field>
-          <Field label="Status">
+          <Field label="Status" icon={CircleDot}>
             <EnumSelect name="status" defaultValue={editing?.status ?? "hadir"} options={enumOptions(ABSENSI_STATUS)} />
           </Field>
-          <Field label="Pengajar pencatat" className="sm:col-span-3">
+          <Field label="Pengajar pencatat" className="sm:col-span-3" icon={GraduationCap}>
             <Combobox
               name="pengajar_id"
               required
@@ -135,15 +141,15 @@ export default async function AbsensiPage({
             />
           </Field>
           <div className="flex items-end gap-2 sm:col-span-3">
-            <Button type="submit" size="sm">Simpan</Button>
+            <Button type="submit" size="sm"><Check aria-hidden />Simpan</Button>
             {editing ? (
               <a href="/portal/absensi">
-                <Button variant="outline" size="sm" type="button">Batal</Button>
+                <Button variant="outline" size="sm" type="button"><X aria-hidden />Batal</Button>
               </a>
             ) : null}
           </div>
         </OfflineForm>
-      </Card>
+      </CrudForm>
 
       <Card className="p-4 sm:p-5">
         {rows.length ? (
@@ -173,7 +179,7 @@ export default async function AbsensiPage({
                   <TableCell className="text-right">
                     <div className="inline-flex gap-1">
                       <a href={`/portal/absensi?dari=${dari}&sampai=${sampai}&edit=${r.id}`}>
-                        <Button variant="ghost" size="sm" type="button">Ubah</Button>
+                        <Button variant="ghost" size="sm" type="button"><Pencil aria-hidden />Ubah</Button>
                       </a>
                       <OfflineForm resource="absensi" op="delete" action={deleteAbsensi}>
                         <input type="hidden" name="id" value={r.id} />

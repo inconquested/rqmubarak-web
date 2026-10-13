@@ -9,7 +9,7 @@ export function isSupabaseConfigured() {
   );
 }
 
-/** Klien sesi (anon) — hanya untuk auth.getUser()/signOut. Query data pemilik via admin.ts. */
+/** Session client (anon) — only for auth.getUser()/signOut. Query owner data via admin.ts. */
 export async function createClient() {
   const cookieStore = await cookies();
   return createServerClient(
@@ -23,7 +23,7 @@ export async function createClient() {
             for (const { name, value, options } of toSet)
               cookieStore.set(name, value, options);
           } catch {
-            // Diabaikan saat dipanggil dari Server Component read-only.
+            // Ignored when called from a read-only Server Component.
           }
         },
       },

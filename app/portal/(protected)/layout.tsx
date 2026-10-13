@@ -1,16 +1,17 @@
+import { LogOut } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/lib/actions";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { getAuthPemilik } from "@/lib/actions/shared";
+import { isSupabaseConfigured } from "@/lib/supabase/server";
 import { SetupNotice } from "@/components/portal/ui";
 import { OfflineProvider } from "@/components/portal/offline";
 import { PortalShell } from "@/components/portal/sidebar";
 
 /**
- * Guard sesi + peran pemilik. Sengaja di route group (protected) agar
- * /portal/login TIDAK ikut terjaga — kalau login ada di dalam layout ini,
- * redirect ke /portal/login akan memantul ke dirinya sendiri (loop 307).
+ * Owner session + role guard. Deliberately in the (protected) route group so
+ * /portal/login is NOT guarded — if login lived inside this layout,
+ * redirects to /portal/login would bounce to itself (307 loop).
  */
 export default async function ProtectedLayout({
   children,
@@ -26,19 +27,9 @@ export default async function ProtectedLayout({
       </div>
     );
   }
-  const session = await createClient();
-  const {
-    data: { user },
-  } = await session.auth.getUser();
+  const { user, me } = await getAuthPemilik();
   if (!user) redirect("/portal/login");
-
-  // pengguna.id = auth.uid(). Baca via service_role agar konsisten dengan portal.
-  const { data: me } = await createAdminClient()
-    .from("pengguna")
-    .select("id,peran,status,nama_lengkap")
-    .eq("id", user.id)
-    .maybeSingle();
-  if (!me || me.peran !== "pemilik" || me.status !== "aktif") {
+  if (!me) {
     return (
       <div className="flex min-h-dvh items-center justify-center px-4">
         <div className="max-w-sm text-center">
@@ -51,6 +42,7 @@ export default async function ProtectedLayout({
           </p>
           <form action={signOut} className="mt-4">
             <Button variant="outline" size="sm">
+              <LogOut aria-hidden />
               Keluar
             </Button>
           </form>
@@ -60,7 +52,7 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <PortalShell user={{ nama_lengkap: me.nama_lengkap, peran: me.peran }}>
+    <PortalShell user={{ nama_lengkap: me.nama_lengkap ?? "Pemilik", peran: me.peran }}>
       <OfflineProvider>{children}</OfflineProvider>
     </PortalShell>
   );

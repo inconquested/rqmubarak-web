@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-/* Tipe baris tabel — cermin supabase/schema_real.sql (jangan diubah sepihak;
-   aplikasi Kotlin memakai skema yang sama). */
+/* Table row types — mirror supabase/schema_real.sql (don't change unilaterally;
+   the Kotlin app uses the same schema). */
 
 export type Kelas = {
   id: string;
@@ -64,7 +64,7 @@ export type Mutabaah = {
   santri?: Pick<Santri, "id" | "nama"> | null;
 };
 
-/** ref: refs/schema.sql — nama tabel case-sensitive ("MadingKonten"). */
+/** ref: refs/schema.sql — table name is case-sensitive ("MadingKonten"). */
 export type MadingKonten = {
   id: string;
   penulis: string | null;
@@ -77,7 +77,7 @@ export type MadingKonten = {
   penulis_ref?: Pick<Pengguna, "id" | "nama_lengkap"> | null;
 };
 
-/* Konstanta form & navigasi (ejaan dikunci ikut skema: alpa, murajaah) */
+/* Form & navigation constants (spelling locked to schema: alpa, murajaah) */
 
 export const KELAS_JENJANG = ["reguler", "intensif", "dewasa"] as const;
 export const ABSENSI_STATUS: AbsensiStatus[] = ["hadir", "sakit", "izin", "alpa"];
@@ -87,8 +87,8 @@ export const PERAN_PENGGUNA = ["pemilik", "pengajar", "tak_dikenal"] as const;
 
 export type Option = { value: string; label: string };
 
-/** Mapper enum → opsi dropdown: value tetap lowercase apa adanya,
- *  label tampil kapital natural (tak_dikenal → Tak Dikenal). */
+/** Map enum → dropdown options: value stays lowercase as-is,
+ *  label shown capitalized naturally (tak_dikenal → Tak Dikenal). */
 export function enumOptions(values: readonly string[]): Option[] {
   return values.map((v) => ({ value: v, label: humanize(v) }));
 }
@@ -96,17 +96,18 @@ export function enumOptions(values: readonly string[]): Option[] {
 export const PORTAL_NAV = [
   { href: "/portal", label: "Monitoring" },
   { href: "/portal/absensi", label: "Rekap Absensi" },
-  { href: "/portal/setoran", label: "Rekap Setoran" },
+  { href: "/portal/mutabaah", label: "Rekap Mutabaah" },
   { href: "/portal/santri", label: "Santri & Rapor" },
   { href: "/portal/kelas", label: "Kelas" },
   { href: "/portal/pengguna", label: "Pengguna" },
   { href: "/portal/mengajar", label: "Mengajar" },
   { href: "/portal/mading", label: "Mading" },
+  { href: "/portal/profil", label: "Profil" },
 ] as const;
 
-/* Helper */
+/* Helpers */
 
-/** Ubah nilai enum snake_case jadi label natural: tak_dikenal → Tak Dikenal. */
+/** Turn a snake_case enum value into a natural label: tak_dikenal → Tak Dikenal. */
 export function humanize(v: string | null | undefined) {
   if (!v) return "—";
   return v
@@ -126,7 +127,7 @@ export function fmtTanggal(iso: string) {
       });
 }
 
-/** Ambil kunci hari YYYY-MM-DD dari timestamptz. */
+/** Get the YYYY-MM-DD day key from a timestamptz. */
 export function dayKey(ts: string) {
   return new Date(ts).toISOString().slice(0, 10);
 }
@@ -150,9 +151,9 @@ export function capaian(m: Pick<Mutabaah, "quran_juz" | "quran_surat" | "from_ay
 type Db = SupabaseClient;
 
 /**
- * Agregat dashboard. Catatan skema: absensi punya tanggal (timestamptz) tapi
- * TANPA kelas_id — pemetaan kelas lewat santri. Mutabaah TANPA kolom tanggal,
- * jadi statistik setoran selalu sepanjang waktu.
+ * Dashboard aggregate. Schema notes: absensi has tanggal (timestamptz) but
+ * NO kelas_id — class mapping goes through santri. Mutabaah has NO date column,
+ * so deposit stats always span all time.
  */
 export async function getDashboard(days: number, kelasId: string | null, db: Db) {
   const { from, to } = rangeTanggal(days);

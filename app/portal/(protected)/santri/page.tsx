@@ -1,3 +1,5 @@
+import { Check, MapPin, Pencil, Phone, Plus, Search, Type, Users, X } from "lucide-react";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { Combobox } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
@@ -45,8 +47,8 @@ export default async function SantriPage({
       .order("nama")
       .limit(500),
     db.from("kelas").select("id,nama_kelas").order("nama_kelas"),
-    // ponytail: mutabaah tanpa kolom tanggal di skema, jadi "terakhir" = urutan query.
-    // Basis persen belum ada — pakai rasio min(setoran/30, 1); ganti bila ada target juz.
+    // ponytail: mutabaah has no date column in the schema, so "latest" = query order.
+    // No percent baseline yet — use min(setoran/30, 1) ratio; replace once a juz target exists.
     db
       .from("mutabaah")
       .select("santri_id,quran_juz,quran_surat,from_ayat,to_ayat")
@@ -98,16 +100,18 @@ export default async function SantriPage({
             type="submit"
             className="h-10 shrink-0 rounded-xl"
           >
+            <Search aria-hidden />
             Cari
           </Button>
         </form>
 
-        {showForm ? (
-          <div className="mt-4 rounded-2xl border border-[#d8e2d6] bg-[#fafcfa] p-4 sm:p-5">
-            <h3 className="font-display text-[15px] font-semibold text-[#1d2b21]">
-              {editing ? "Ubah santri" : "Tambah santri"}
-            </h3>
-            <OfflineForm
+        <CrudForm
+          title={editing ? "Ubah santri" : "Tambah santri"}
+          fabLabel="Tambah santri"
+          closeHref="/portal/santri"
+          defaultOpen={showForm}
+        >
+          <OfflineForm
               resource="santri"
               op="upsert"
               action={upsertSantri}
@@ -116,14 +120,14 @@ export default async function SantriPage({
               {editing ? (
                 <input type="hidden" name="id" value={editing.id} />
               ) : null}
-              <Field label="Nama">
+              <Field label="Nama" icon={Type}>
                 <Input
                   name="nama"
                   required
                   defaultValue={editing?.nama ?? ""}
                 />
               </Field>
-              <Field label="Kelas">
+              <Field label="Kelas" icon={Users}>
                 <Combobox
                   name="kelas_id"
                   defaultValue={editing?.kelas_id ?? ""}
@@ -135,13 +139,13 @@ export default async function SantriPage({
                   }))}
                 />
               </Field>
-              <Field label="No. telepon">
+              <Field label="No. telepon" icon={Phone}>
                 <Input
                   name="no_telepon"
                   defaultValue={editing?.no_telepon ?? ""}
                 />
               </Field>
-              <Field label="Alamat">
+              <Field label="Alamat" icon={MapPin}>
                 <Textarea
                   name="alamat"
                   rows={2}
@@ -150,25 +154,18 @@ export default async function SantriPage({
               </Field>
               <div className="flex items-end gap-2 sm:col-span-2">
                 <Button type="submit" size="sm">
+                  {editing ? <Check aria-hidden /> : <Plus aria-hidden />}
                   {editing ? "Simpan" : "Tambah"}
                 </Button>
                 <a href="/portal/santri">
                   <Button variant="outline" size="sm" type="button">
+                    <X aria-hidden />
                     Batal
                   </Button>
                 </a>
               </div>
             </OfflineForm>
-          </div>
-        ) : (
-          <div className="mt-4">
-            <a href="/portal/santri?tambah=1">
-              <Button type="button" size="sm">
-                + Tambah Santri
-              </Button>
-            </a>
-          </div>
-        )}
+        </CrudForm>
 
         <div className="mt-6">
           {rows.length ? (
@@ -232,6 +229,7 @@ export default async function SantriPage({
                         <div className="inline-flex gap-2">
                           <a href={`/portal/santri?edit=${r.id}`}>
                             <Button variant="outline" size="sm" type="button">
+                              <Pencil aria-hidden />
                               Edit
                             </Button>
                           </a>

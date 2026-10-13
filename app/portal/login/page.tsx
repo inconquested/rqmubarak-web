@@ -1,5 +1,6 @@
 "use client";
 
+import { LoaderCircle, LogIn } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { Reveal } from "@/components/portal/motion";
+import { signIn } from "@/lib/actions";
 
 function LoginForm() {
   const router = useRouter();
@@ -15,7 +17,7 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Sesi browser masih valid (mis. tombol back) → langsung ke portal.
+  // Browser session still valid (e.g. back button) → go straight to portal.
   useEffect(() => {
     createClient()
       .auth.getSession()
@@ -43,14 +45,10 @@ function LoginForm() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const fd = new FormData(e.currentTarget);
-    const { error } = await createClient().auth.signInWithPassword({
-      email: fd.get("email")?.toString() ?? "",
-      password: fd.get("password")?.toString() ?? "",
-    });
+    const res = await signIn(new FormData(e.currentTarget));
     setLoading(false);
-    if (error) {
-      setError("Email atau kata sandi salah.");
+    if (!res.ok) {
+      setError(res.error);
       return;
     }
     router.push(params.get("next") || "/portal");
@@ -87,8 +85,18 @@ function LoginForm() {
           </p>
         ) : null}
         <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? (
+            <LoaderCircle aria-hidden className="animate-spin" />
+          ) : (
+            <LogIn aria-hidden />
+          )}
           {loading ? "Memeriksa…" : "Masuk"}
         </Button>
+        <p className="text-center text-[13px]">
+          <a href="/portal/lupa-password" className="underline underline-offset-4">
+            Lupa kata sandi?
+          </a>
+        </p>
       </form>
     </Card>
     </Reveal>

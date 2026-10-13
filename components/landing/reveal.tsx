@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1];
 
-/** Fade+rise saat masuk viewport. Sekali saja, nonaktif bila reduced-motion. */
+/** Fade + rise on viewport entry. Runs once, disabled under reduced motion. */
 export function Reveal({
   children,
   delay = 0,
@@ -32,10 +32,10 @@ export function Reveal({
 }
 
 /**
- * Reveal per kartu berbasis scroll (IntersectionObserver, sekali saja).
- * Tiap kartu muncul sendiri saat scrollY mencapai posisinya — ringan: tanpa
- * listener scroll, tanpa kerja per-frame. `delay` hanya untuk cascade saat
- * beberapa kartu masuk viewport bersamaan (grid desktop).
+ * Scroll-based per-card reveal (IntersectionObserver, once only).
+ * Each card appears on its own when scrollY reaches its position — lightweight: no
+ * scroll listener, no per-frame work. `delay` only cascades when
+ * several cards enter the viewport together (desktop grid).
  */
 export function ScrollReveal({
   children,

@@ -16,7 +16,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { site } from "@/lib/site";
 import type { Absensi, Mutabaah, Santri } from "@/lib/portal";
 
-/** Rapor per santri: profil + ringkasan absensi + riwayat setoran. */
+/** Per-santri report: profile + attendance summary + setoran history. */
 export default async function RaporPage({
   params,
 }: {
@@ -39,7 +39,7 @@ export default async function RaporPage({
 
   return (
     <div className="space-y-5">
-      {/* Dashboard layar — disembunyikan saat cetak */}
+      {/* On-screen dashboard — hidden when printing */}
       <div className="space-y-5 print:hidden">
         <PageHeader
           title={santri.nama}
@@ -137,7 +137,7 @@ export default async function RaporPage({
       </Card>
       </div>
 
-      {/* Rapor cetak — hanya tampil di hasil print (gantikan dashboard + shell). */}
+      {/* Print report — only shown in print output (replaces dashboard + shell). */}
       <div className="rapor hidden print:block">
         <header className="rapor-header">
           <p className="rapor-lembaga">{site.name}</p>

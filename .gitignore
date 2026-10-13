@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Development
 /refs
+.playwright-mcp
+TASK.md
+

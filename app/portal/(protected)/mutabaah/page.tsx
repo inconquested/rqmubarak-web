@@ -1,3 +1,4 @@
+import { BookOpen, Check, Filter, GraduationCap, Layers, Pencil, Quote, Search, Star, Tag, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,19 +11,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteButton } from "@/components/portal/delete-button";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { Combobox, EnumSelect } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
 import { Empty, Field, FormNotice, PageHeader, StatusBadge } from "@/components/portal/ui";
 import { MUTABAAH_JENIS, MUTABAAH_NILAI, capaian, enumOptions, humanize } from "@/lib/portal";
 import { deleteMutabaah, upsertMutabaah } from "@/lib/actions";
+import { QURAN_SURAH_OPTIONS } from "@/lib/quran";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Mutabaah, Pengguna, Santri } from "@/lib/portal";
 
-export default async function SetoranPage({
+export default async function mutabaahPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    ok?: string; error?: string; edit?: string; jenis?: string; cari?: string;
+    ok?: string; error?: string; edit?: string; tambah?: string; jenis?: string; cari?: string;
   }>;
 }) {
   const sp = await searchParams;
@@ -48,18 +51,19 @@ export default async function SetoranPage({
   const santri = (santriRes.data ?? []) as Pick<Santri, "id" | "nama">[];
   const pengajar = (usersRes.data ?? []) as Pick<Pengguna, "id" | "nama_lengkap">[];
   const editing = sp.edit ? semua.find((r) => r.id === sp.edit) : undefined;
+  const showForm = Boolean(editing || sp.tambah);
 
   return (
     <div className="space-y-5">
       <PageHeader
-        title="Rekap Setoran"
+        title="Rekap mutabaah"
         description="Catatan mutabaah (ziyadah · murajaah) + nilai capaian. Skema tidak menyimpan tanggal."
       />
       <FormNotice ok={sp.ok} error={sp.error} />
 
       <Card className="p-4 sm:p-5">
         <form method="get" className="grid grid-cols-2 items-end gap-3 sm:flex sm:flex-wrap">
-          <Field label="Jenis">
+          <Field label="Jenis" icon={Tag}>
             <EnumSelect
               name="jenis"
               defaultValue={sp.jenis ?? ""}
@@ -68,21 +72,24 @@ export default async function SetoranPage({
               className="w-full sm:w-36"
             />
           </Field>
-          <Field label="Cari santri" className="col-span-1">
+          <Field label="Cari santri" className="col-span-1" icon={Search}>
             <Input name="cari" defaultValue={sp.cari ?? ""} placeholder="Nama…" className="h-8 w-full sm:w-44" />
           </Field>
-          <Button variant="outline" size="sm" type="submit" className="col-span-2 sm:col-span-1">Saring</Button>
+          <Button variant="outline" size="sm" type="submit" className="col-span-2 sm:col-span-1"><Filter aria-hidden />Saring</Button>
         </form>
-        <p className="mt-3 text-[13px] text-[#6b7a6e]">{rows.length} baris setoran.</p>
+        <p className="mt-3 text-[13px] text-[#6b7a6e]">{rows.length} baris mutabaah.</p>
       </Card>
 
-      <Card className="p-4 sm:p-5">
-        <h2 className="font-display text-[15px] font-semibold">
-          {editing ? "Ubah setoran" : "Catat setoran"}
-        </h2>
-        <OfflineForm resource="mutabaah" op="upsert" action={upsertMutabaah} className="mt-3 grid gap-3 sm:grid-cols-3">
+      <CrudForm
+        title={editing ? "Ubah mutabaah" : "Catat mutabaah"}
+        fabLabel="Catat mutabaah"
+        closeHref="/portal/mutabaah"
+        defaultOpen={showForm}
+        wide
+      >
+        <OfflineForm resource="mutabaah" op="upsert" action={upsertMutabaah} className="grid gap-3 sm:grid-cols-3">
           {editing ? <input type="hidden" name="id" value={editing.id} /> : null}
-          <Field label="Santri">
+          <Field label="Santri" icon={User}>
             <Combobox
               name="santri_id"
               required
@@ -92,13 +99,13 @@ export default async function SetoranPage({
               options={santri.map((s) => ({ value: s.id, label: s.nama }))}
             />
           </Field>
-          <Field label="Jenis">
+          <Field label="Jenis" icon={Tag}>
             <EnumSelect name="jenis" defaultValue={editing?.jenis ?? "ziyadah"} options={MUTABAAH_JENIS} />
           </Field>
-          <Field label="Nilai">
+          <Field label="Nilai" icon={Star}>
             <EnumSelect name="nilai" defaultValue={editing?.nilai ?? "jayyid"} options={enumOptions(MUTABAAH_NILAI)} />
           </Field>
-          <Field label="Pengajar (opsional)">
+          <Field label="Pengajar (opsional)" icon={GraduationCap}>
             <Combobox
               name="pengajar_id"
               defaultValue={editing?.pengajar_id ?? ""}
@@ -107,28 +114,36 @@ export default async function SetoranPage({
               options={pengajar.map((p) => ({ value: p.id, label: p.nama_lengkap }))}
             />
           </Field>
-          <Field label="Juz">
+          <Field label="Juz" icon={Layers}>
             <Input type="number" name="quran_juz" min={1} max={30} defaultValue={editing?.quran_juz ?? ""} className="h-8" />
           </Field>
-          <Field label="No. surah">
-            <Input type="number" name="quran_surat" min={1} max={114} defaultValue={editing?.quran_surat ?? ""} className="h-8" />
+          <Field label="Surah" icon={BookOpen}>
+            <Combobox
+              name="quran_surat"
+              defaultValue={
+                editing?.quran_surat ? String(editing.quran_surat) : ""
+              }
+              placeholder="Pilih surah"
+              searchPlaceholder="Cari surah…"
+              options={[...QURAN_SURAH_OPTIONS]}
+            />
           </Field>
-          <Field label="Dari ayat">
+          <Field label="Dari ayat" icon={Quote}>
             <Input type="number" name="from_ayat" min={1} defaultValue={editing?.from_ayat ?? ""} className="h-8" />
           </Field>
-          <Field label="Sampai ayat">
+          <Field label="Sampai ayat" icon={Quote}>
             <Input type="number" name="to_ayat" min={1} defaultValue={editing?.to_ayat ?? ""} className="h-8" />
           </Field>
           <div className="flex items-end gap-2 sm:col-span-3">
-            <Button type="submit" size="sm">Simpan</Button>
+            <Button type="submit" size="sm"><Check aria-hidden />Simpan</Button>
             {editing ? (
-              <a href="/portal/setoran">
-                <Button variant="outline" size="sm" type="button">Batal</Button>
+              <a href="/portal/mutabaah">
+                <Button variant="outline" size="sm" type="button"><X aria-hidden />Batal</Button>
               </a>
             ) : null}
           </div>
         </OfflineForm>
-      </Card>
+      </CrudForm>
 
       <Card className="p-4 sm:p-5">
         {rows.length ? (
@@ -155,12 +170,12 @@ export default async function SetoranPage({
                   <TableCell className="hidden sm:table-cell"><StatusBadge status={r.nilai ?? "—"} /></TableCell>
                   <TableCell className="text-right">
                     <div className="inline-flex gap-1">
-                      <a href={`/portal/setoran?edit=${r.id}`}>
-                        <Button variant="ghost" size="sm" type="button">Ubah</Button>
+                      <a href={`/portal/mutabaah?edit=${r.id}`}>
+                        <Button variant="ghost" size="sm" type="button"><Pencil aria-hidden />Ubah</Button>
                       </a>
                       <OfflineForm resource="mutabaah" op="delete" action={deleteMutabaah}>
                         <input type="hidden" name="id" value={r.id} />
-                        <DeleteButton message="Hapus baris setoran ini?" />
+                        <DeleteButton message="Hapus baris mutabaah ini?" />
                       </OfflineForm>
                     </div>
                   </TableCell>
@@ -169,7 +184,7 @@ export default async function SetoranPage({
             </TableBody>
           </Table>
         ) : (
-          <Empty text="Tidak ada setoran pada filter ini." />
+          <Empty text="Tidak ada mutabaah pada filter ini." />
         )}
       </Card>
     </div>

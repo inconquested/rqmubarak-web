@@ -11,6 +11,7 @@ import {
   Newspaper,
   NotebookPen,
   UserCog,
+  UserRound,
   Users,
   X,
 } from "lucide-react";
@@ -23,6 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { PORTAL_NAV } from "@/lib/portal";
+import { ThemeToggle } from "@/components/portal/theme-toggle";
 import { signOut } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 
@@ -46,12 +48,13 @@ function initials(name: string) {
 const ICONS: Record<string, typeof LayoutDashboard> = {
   "/portal": LayoutDashboard,
   "/portal/absensi": ClipboardCheck,
-  "/portal/setoran": NotebookPen,
+  "/portal/mutabaah": NotebookPen,
   "/portal/santri": Users,
   "/portal/kelas": Layers,
   "/portal/pengguna": UserCog,
   "/portal/mengajar": ArrowLeftRight,
   "/portal/mading": Newspaper,
+  "/portal/profil": UserRound,
 };
 
 function isActive(href: string, pathname: string) {
@@ -72,10 +75,11 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-[13.5px] font-medium transition-colors duration-200 [transition-timing-function:var(--ease-out)]",
+                "flex items-center gap-2.5 rounded-xl px-3.5 py-2.5",
                 active
                   ? "bg-[#cbdcc9] text-[#1d2b21]"
                   : "text-[#4b5b4f] hover:bg-[#eef4ec]",
+                "text-[13.5px] font-medium transition-colors duration-200 [transition-timing-function:var(--ease-out)]",
               )}
             >
               <Icon aria-hidden className="size-4 shrink-0" />
@@ -104,40 +108,63 @@ function SidebarBody({
         <NavItems onNavigate={onNavigate} />
       </nav>
       <div className="px-3 py-4">
+        <ThemeToggle className="mb-1" />
         {user ? (
           <Popover>
             <PopoverTrigger
-              className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors duration-200 [transition-timing-function:var(--ease-out)] hover:bg-[#eef4ec]"
+              className={cn(
+                "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2",
+                "hover:bg-[#eef4ec]",
+                "text-left transition-colors duration-200 [transition-timing-function:var(--ease-out)]",
+              )}
             >
               <span
                 aria-hidden
-                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#cbdcc9] text-[11px] font-semibold text-[#1d2b21]"
+                className={cn(
+                  "flex size-8 shrink-0 items-center justify-center rounded-full",
+                  "bg-[#cbdcc9] text-[#1d2b21]",
+                  "text-[11px] font-semibold",
+                )}
               >
                 {initials(user.nama_lengkap)}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13.5px] font-medium text-[#1d2b21]">
+                <span
+                  className={cn(
+                    "block truncate",
+                    "text-[#1d2b21]",
+                    "text-[13.5px] font-medium",
+                  )}
+                >
                   {user.nama_lengkap}
                 </span>
-                <span className="block text-[11.5px] text-[#6b7a6e]">
+                <span className={cn("block", "text-[#6b7a6e]", "text-[11.5px]")}>
                   {PERAN_LABEL[user.peran] ?? user.peran}
                 </span>
               </span>
               <ChevronsUpDown
                 aria-hidden
-                className="size-4 shrink-0 text-[#4b5b4f]"
+                className={cn("size-4 shrink-0", "text-[#4b5b4f]")}
               />
             </PopoverTrigger>
             <PopoverContent
               side="top"
               align="start"
               sideOffset={8}
-              className="w-(--anchor-width) rounded-xl border border-white/60 bg-white p-1.5 shadow-[0_12px_40px_-16px_rgba(61,79,66,0.18)] ring-0"
+              className={cn(
+                "w-(--anchor-width) rounded-xl border p-1.5",
+                "border-white/60 bg-white",
+                "shadow-[0_12px_40px_-16px_rgba(61,79,66,0.18)] ring-0",
+              )}
             >
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] font-medium text-[#4b5b4f] transition-colors duration-200 [transition-timing-function:var(--ease-out)] hover:bg-[#eef4ec]"
+                  className={cn(
+                    "flex w-full items-center gap-2.5 rounded-lg px-3 py-2",
+                    "text-[#4b5b4f] hover:bg-[#eef4ec]",
+                    "text-[13.5px] font-medium transition-colors duration-200 [transition-timing-function:var(--ease-out)]",
+                  )}
                 >
                   <LogOut aria-hidden className="size-4 shrink-0" />
                   <span>Logout</span>
@@ -149,7 +176,11 @@ function SidebarBody({
           <form action={signOut}>
             <button
               type="submit"
-              className="flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-[13.5px] font-medium text-[#4b5b4f] transition-colors duration-200 [transition-timing-function:var(--ease-out)] hover:bg-[#eef4ec]"
+              className={cn(
+                "flex w-full items-center gap-2.5 rounded-xl px-3.5 py-2.5",
+                "text-[#4b5b4f] hover:bg-[#eef4ec]",
+                "text-[13.5px] font-medium transition-colors duration-200 [transition-timing-function:var(--ease-out)]",
+              )}
             >
               <LogOut aria-hidden className="size-4 shrink-0" />
               <span>Logout</span>
@@ -161,8 +192,11 @@ function SidebarBody({
   );
 }
 
-const CARD_CLASS =
-  "w-[230px] rounded-3xl border border-white/60 bg-white shadow-[0_12px_40px_-16px_rgba(61,79,66,0.18)]";
+const CARD_CLASS = cn(
+  "w-[230px] rounded-3xl border",
+  "border-white/60 bg-white",
+  "shadow-[0_12px_40px_-16px_rgba(61,79,66,0.18)]",
+);
 
 export function PortalShell({
   children,
@@ -174,8 +208,8 @@ export function PortalShell({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-dvh bg-[linear-gradient(160deg,#eef4ec_0%,#fbfdfb_45%,#dde8da_100%)]">
-      {/* Desktop: kartu putih mengambang */}
+    <div className="min-h-dvh bg-[linear-gradient(160deg,#eef4ec_0%,#fbfdfb_45%,#dde8da_100%)] dark:bg-[#0d1410] dark:bg-none">
+      {/* Desktop: floating white card */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 m-3 hidden h-[calc(100dvh-1.5rem)] lg:block",
@@ -185,13 +219,17 @@ export function PortalShell({
         <SidebarBody user={user} />
       </aside>
 
-      {/* Mobile: tombol menu + drawer */}
+      {/* Mobile: menu button + drawer */}
       <button
         type="button"
         aria-label="Buka menu"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="fixed top-4 left-4 z-40 flex size-10 items-center justify-center rounded-xl border border-white/60 bg-white text-[#1d2b21] shadow-[0_12px_40px_-16px_rgba(61,79,66,0.18)] lg:hidden"
+        className={cn(
+          "fixed top-4 left-4 z-40 flex size-10 items-center justify-center rounded-xl border lg:hidden",
+          "border-white/60 bg-white text-[#1d2b21]",
+          "shadow-[0_12px_40px_-16px_rgba(61,79,66,0.18)]",
+        )}
       >
         <Menu aria-hidden className="size-4" />
       </button>
@@ -201,14 +239,20 @@ export function PortalShell({
             type="button"
             aria-label="Tutup menu"
             onClick={() => setOpen(false)}
-            className="absolute inset-0 bg-[#1d2b21]/30 backdrop-blur-[2px]"
+            className={cn(
+              "absolute inset-0 backdrop-blur-[2px]",
+              "bg-[#1d2b21]/30",
+            )}
           />
           <aside className={cn("absolute top-3 bottom-3 left-3", CARD_CLASS)}>
             <button
               type="button"
               aria-label="Tutup menu"
               onClick={() => setOpen(false)}
-              className="absolute top-4 right-4 flex size-10 items-center justify-center rounded-lg text-[#4b5b4f] hover:bg-[#eef4ec]"
+              className={cn(
+                "absolute top-4 right-4 flex size-10 items-center justify-center rounded-lg",
+                "text-[#4b5b4f] hover:bg-[#eef4ec]",
+              )}
             >
               <X aria-hidden className="size-4" />
             </button>

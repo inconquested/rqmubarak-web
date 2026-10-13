@@ -4,10 +4,10 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-/** Token kurva tunggal portal — sama dengan --ease-out di globals.css. */
+/** Portal-wide single curve token — matches --ease-out in globals.css. */
 export const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1];
 
-/** Entrance standar: fade + rise 8px, 300ms ease-out, stagger via delay. */
+/** Standard entrance: fade + 8px rise, 300ms ease-out, stagger via delay. */
 export function Reveal({
   children,
   delay = 0,
@@ -31,7 +31,7 @@ export function Reveal({
   );
 }
 
-/** Angka KPI yang menghitung naik — state indication, 700ms, hormati reduced-motion. */
+/** Count-up KPI number — state indication, 700ms, respects reduced-motion. */
 export function CountUp({
   to,
   suffix = "",
@@ -67,7 +67,7 @@ export function CountUp({
   );
 }
 
-/** Isi bar: tumbuh via scaleX (transform-only), stagger 40ms per baris. */
+/** Bar fill: grows via scaleX (transform-only), 40ms stagger per row. */
 export function BarGrow({
   ratio,
   delay = 0,
@@ -106,7 +106,7 @@ export function BarGrow({
   );
 }
 
-/** Transisi antar-halaman portal: fade 180ms, nyaris tak terasa. */
+/** Portal page transition: 180ms fade, barely noticeable. */
 export function PageSwitch({ children }: { children: React.ReactNode }) {
   const reduce = useReducedMotion();
   if (reduce) return <>{children}</>;

@@ -11,9 +11,10 @@ import {
 import { fmtTanggal } from "@/lib/portal";
 import type { MadingKonten } from "@/lib/portal";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cn } from "@/lib/utils";
 
-/* Fetch server-side via service_role (kunci tak pernah ke klien) —
- * dipakai rute portal (pemilik) maupun rute publik. */
+/* Server-side fetch via service_role (key never reaches the client) —
+ * used by both portal (owner) and public routes. */
 export async function getMading(id: string) {
   const { data } = await createAdminClient()
     .from("MadingKonten")
@@ -23,17 +24,97 @@ export async function getMading(id: string) {
   return data as unknown as MadingKonten | null;
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+const ALLOWED_TAGS: Record<string, boolean> = {
+  p: true,
+  br: true,
+  strong: true,
+  em: true,
+  u: true,
+  h2: true,
+  h3: true,
+  ul: true,
+  ol: true,
+  li: true,
+  blockquote: true,
+  a: true,
+};
+/* Legacy execCommand output: b/i/div normalized, everything else dropped. */
+const TAG_ALIAS: Record<string, string> = { b: "strong", i: "em", div: "p" };
+const DROP_CONTENT: Record<string, boolean> = {
+  script: true,
+  style: true,
+  iframe: true,
+  object: true,
+  embed: true,
+  form: true,
+};
+
+/* Dependency-free sanitizer: drops script/style, on* attributes, and javascript: hrefs.
+ * Allowlisted tags only (all attributes dropped except http(s)/mailto href on <a>). */
+export function sanitizeMadingHtml(input: string): string {
+  const raw = input ?? "";
+  if (!/<[a-zA-Z][^>]*>/.test(raw)) {
+    return raw
+      .split(/\n{2,}|\n/)
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .map((part) => `<p>${escapeHtml(part)}</p>`)
+      .join("");
+  }
+  let html = raw.replace(/<!--[\s\S]*?-->/g, "");
+  for (const tag of Object.keys(DROP_CONTENT)) {
+    html = html.replace(
+      new RegExp(`<${tag}[\\s>][\\s\\S]*?<\\/${tag}\\s*>`, "gi"),
+      "",
+    );
+  }
+  return html.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*\/?>/g, (tag, name) => {
+    const lower = String(name).toLowerCase();
+    if (DROP_CONTENT[lower]) return "";
+    const mapped = TAG_ALIAS[lower] || lower;
+    if (!ALLOWED_TAGS[mapped]) return "";
+    if (tag.charAt(1) === "/") return `</${mapped}>`;
+    if (mapped === "br") return "<br>";
+    if (mapped === "a") {
+      const m = tag.match(/\shref\s*=\s*("([^"]*)"|'([^']*)'|([^\s>]+))/i);
+      const href = (m ? (m[2] ?? m[3] ?? m[4] ?? "") : "").trim();
+      if (!/^(https?:\/\/|mailto:)/i.test(href)) return "<a>";
+      return `<a href="${href.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}">`;
+    }
+    return `<${mapped}>`;
+  });
+}
+
+/* Plain text for read-time estimate (script/style contents excluded). */
+export function madingPlainText(input: string): string {
+  const raw = input ?? "";
+  return raw
+    .replace(/<(script|style)[\s>][\s\S]*?<\/\1\s*>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function Meta({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <Icon aria-hidden className="size-3.5 text-[#6b7a6e]" />
+      <Icon aria-hidden className={cn("size-3.5", "text-[#6b7a6e]")} />
       {children}
     </span>
   );
 }
 
-/* Artikel editorial: tombol kembali + lencana + judul + meta berikon +
- * sampul + ringkasan aksen + isi per paragraf. */
+/* Editorial article: back button + badge + title + icon meta +
+ * cover + accent summary + per-paragraph body. */
 export function MadingArticle({
   row,
   backHref,
@@ -50,27 +131,42 @@ export function MadingArticle({
     row.updated_at && row.updated_at !== row.created_at
       ? fmtTanggal(row.updated_at.slice(0, 10))
       : null;
-  const kata = (row.konten ?? "").split(/\s+/).filter(Boolean).length;
+  const kata = madingPlainText(row.konten ?? "")
+    .split(/\s+/)
+    .filter(Boolean).length;
   const menit = Math.max(1, Math.ceil(kata / 200));
-  const paragraf = (row.konten ?? "")
-    .split(/\n{2,}|\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+  const isi = sanitizeMadingHtml(row.konten ?? "");
 
   return (
     <article className="mx-auto max-w-2xl" aria-labelledby="judul-artikel">
       <header className="mt-6">
-        <p className="inline-flex items-center gap-1.5 rounded-full bg-[#eef4ec] px-2.5 py-1 text-[12px] font-semibold text-[#2f6b3a]">
+        <p
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1",
+            "bg-[#eef4ec] text-[#2f6b3a]",
+            "text-[12px] font-semibold",
+          )}
+        >
           <Newspaper aria-hidden className="size-3.5" />
           Mading
         </p>
         <h1
           id="judul-artikel"
-          className="font-display mt-3 text-3xl font-medium tracking-tight text-balance text-[#1d2b21] sm:text-4xl"
+          className={cn(
+            "mt-3",
+            "text-[#1d2b21]",
+            "font-display text-3xl font-medium tracking-tight text-balance sm:text-4xl",
+          )}
         >
           {row.judul ?? "Tanpa judul"}
         </h1>
-        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-[13px] text-[#6b7a6e]">
+        <div
+          className={cn(
+            "mt-4 flex flex-wrap gap-x-4 gap-y-1.5",
+            "text-[#6b7a6e]",
+            "text-[13px]",
+          )}
+        >
           <Meta icon={UserRound}>{penulis}</Meta>
           <Meta icon={CalendarDays}>
             <time dateTime={row.created_at}>{fmtTanggal(row.created_at.slice(0, 10))}</time>
@@ -89,33 +185,57 @@ export function MadingArticle({
         <img
           src={row.thumb_url}
           alt={row.judul ?? "Sampul mading"}
-          className="mt-6 aspect-video w-full rounded-2xl border border-[#d8e2d6] object-cover shadow-sm"
+          className={cn(
+            "mt-6 aspect-video w-full rounded-2xl border object-cover",
+            "border-[#d8e2d6]",
+            "shadow-sm",
+          )}
         />
       ) : (
-        <hr className="mt-6 border-[#d8e2d6]" />
+        <hr className={cn("mt-6", "border-[#d8e2d6]")} />
       )}
 
       {row.deskripsi ? (
-        <p className="mt-6 border-l-[3px] border-[#2f6b3a] pl-4 text-[16px] leading-relaxed font-medium text-[#1d2b21]">
+        <p
+          className={cn(
+            "mt-6 border-l-[3px] pl-4",
+            "border-[#2f6b3a] text-[#1d2b21]",
+            "text-[16px] leading-relaxed font-medium",
+          )}
+        >
           {row.deskripsi}
         </p>
       ) : null}
 
-      {paragraf.length ? (
-        <div className="mt-6 space-y-5 text-[15px] leading-[1.8] text-[#33403a]">
-          {paragraf.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
+      {isi ? (
+        <div
+          className={cn(
+            "mt-6 space-y-5",
+            "text-[#33403a]",
+            "text-[15px] leading-[1.8] [&_a]:font-medium [&_a]:text-[#2f6b3a] [&_a]:underline [&_blockquote]:border-l-[3px] [&_blockquote]:border-[#2f6b3a] [&_blockquote]:pl-4 [&_blockquote]:font-medium [&_blockquote]:text-[#1d2b21] [&_h2]:font-display [&_h2]:text-xl [&_h2]:font-medium [&_h2]:tracking-tight [&_h2]:text-[#1d2b21] [&_h3]:text-[17px] [&_h3]:font-semibold [&_h3]:text-[#1d2b21] [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5",
+          )}
+          dangerouslySetInnerHTML={{ __html: isi }}
+        />
       ) : (
-        <p className="mt-6 text-[14px] text-[#6b7a6e]">Belum ada isi.</p>
+        <p className={cn("mt-6", "text-[#6b7a6e]", "text-[14px]")}>
+          Belum ada isi.
+        </p>
       )}
 
       {editHref ? (
-        <footer className="mt-10 flex justify-end border-t border-[#d8e2d6] pt-5">
+        <footer
+          className={cn(
+            "mt-10 flex justify-end border-t pt-5",
+            "border-[#d8e2d6]",
+          )}
+        >
           <a
             href={editHref}
-            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-[#1d2b21] px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-[#2c4032]"
+            className={cn(
+              "inline-flex h-8 items-center gap-1.5 rounded-full px-3.5",
+              "bg-[#1d2b21] text-white hover:bg-[#2c4032]",
+              "text-[13px] font-medium transition-colors",
+            )}
           >
             <PencilLine aria-hidden className="size-3.5" />
             Ubah

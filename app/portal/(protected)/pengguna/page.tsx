@@ -1,3 +1,5 @@
+import { Check, CircleDot, KeyRound, Mail, Pencil, Phone, Plus, Search, ShieldCheck, User, X } from "lucide-react";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { EnumSelect } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
@@ -79,16 +81,18 @@ export default async function PenggunaPage({
             type="submit"
             className="h-10 shrink-0 rounded-xl"
           >
+            <Search aria-hidden />
             Cari
           </Button>
         </form>
 
-        {showForm ? (
-          <div className="mt-4 rounded-2xl border border-[#d8e2d6] bg-[#fafcfa] p-4 sm:p-5">
-            <h3 className="font-display text-[15px] font-semibold text-[#1d2b21]">
-              {editing ? "Ubah pengguna" : "Tambah pengguna"}
-            </h3>
-            <OfflineForm
+        <CrudForm
+          title={editing ? "Ubah pengguna" : "Tambah pengguna"}
+          fabLabel="Tambah pengajar"
+          closeHref="/portal/pengguna"
+          defaultOpen={showForm}
+        >
+          <OfflineForm
               resource="pengguna"
               op="upsert"
               action={upsertPengguna}
@@ -99,6 +103,7 @@ export default async function PenggunaPage({
               ) : null}
               <Field
                 label={editing ? "Kata sandi baru (opsional)" : "Kata sandi"}
+                icon={KeyRound}
               >
                 <Input
                   name="password"
@@ -111,14 +116,14 @@ export default async function PenggunaPage({
                   }
                 />
               </Field>
-              <Field label="Nama lengkap">
+              <Field label="Nama lengkap" icon={User}>
                 <Input
                   name="nama_lengkap"
                   required
                   defaultValue={editing?.nama_lengkap ?? ""}
                 />
               </Field>
-              <Field label="Email">
+              <Field label="Email" icon={Mail}>
                 <Input
                   name="email"
                   type="email"
@@ -126,21 +131,21 @@ export default async function PenggunaPage({
                   defaultValue={editing?.email ?? ""}
                 />
               </Field>
-              <Field label="No. telepon">
+              <Field label="No. telepon" icon={Phone}>
                 <Input
                   name="no_telepon"
                   defaultValue={editing?.no_telepon ?? ""}
                 />
               </Field>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Peran">
+                <Field label="Peran" icon={ShieldCheck}>
                   <EnumSelect
                     name="peran"
                     defaultValue={editing?.peran ?? "pengajar"}
                     options={enumOptions(PERAN_PENGGUNA)}
                   />
                 </Field>
-                <Field label="Status">
+                <Field label="Status" icon={CircleDot}>
                   <EnumSelect
                     name="status"
                     defaultValue={editing?.status ?? "aktif"}
@@ -153,25 +158,18 @@ export default async function PenggunaPage({
               </div>
               <div className="flex items-end gap-2 sm:col-span-2">
                 <Button type="submit" size="sm">
+                  {editing ? <Check aria-hidden /> : <Plus aria-hidden />}
                   {editing ? "Simpan" : "Tambah"}
                 </Button>
                 <a href="/portal/pengguna">
                   <Button variant="outline" size="sm" type="button">
+                    <X aria-hidden />
                     Batal
                   </Button>
                 </a>
               </div>
             </OfflineForm>
-          </div>
-        ) : (
-          <div className="mt-4">
-            <a href="/portal/pengguna?tambah=1">
-              <Button type="button" size="sm">
-                + Tambah Pengajar
-              </Button>
-            </a>
-          </div>
-        )}
+        </CrudForm>
 
         <div className="mt-6">
           {rows.length ? (
@@ -222,6 +220,7 @@ export default async function PenggunaPage({
                       <div className="inline-flex gap-2">
                         <a href={`/portal/pengguna?edit=${r.id}`}>
                           <Button variant="outline" size="sm" type="button">
+                            <Pencil aria-hidden />
                             Edit
                           </Button>
                         </a>

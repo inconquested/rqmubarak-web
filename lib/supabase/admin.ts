@@ -1,10 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
 /**
- * Klien service_role — bypass RLS. Impor HANYA dari Server Component/Route/Action
- * setelah peran pemilik terverifikasi (lihat requirePemilik).
- * RLS schema_real.sql men-scope semua baris ke penugasan pengajar yang login,
- * jadi rekap global pemilik mustahil via anon key.
+ * service_role client — bypasses RLS. Import ONLY from Server Component/Route/Action
+ * after the owner role is verified (see requirePemilik).
+ * RLS schema_real.sql scopes all rows to the logged-in teacher's assignments,
+ * so a global owner recap is impossible via anon key.
  */
 export function createAdminClient() {
   return createClient(

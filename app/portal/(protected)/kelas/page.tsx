@@ -1,3 +1,5 @@
+import { Check, Clock, Layers, Pencil, Plus, Type, X } from "lucide-react";
+import { CrudForm } from "@/components/portal/crud-dialog";
 import { DeleteButton } from "@/components/portal/delete-button";
 import { EnumSelect } from "@/components/portal/fields";
 import { OfflineForm } from "@/components/portal/offline";
@@ -56,12 +58,13 @@ export default async function KelasPage({
           meta={`${rows.length} kelas terdaftar`}
         />
 
-        {showForm ? (
-          <div className="mt-5 rounded-2xl border border-[#d8e2d6] bg-[#fafcfa] p-4 sm:p-5">
-            <h3 className="font-display text-[15px] font-semibold text-[#1d2b21]">
-              {editing ? "Ubah kelas" : "Tambah kelas"}
-            </h3>
-            <OfflineForm
+        <CrudForm
+          title={editing ? "Ubah kelas" : "Tambah kelas"}
+          fabLabel="Tambah kelas"
+          closeHref="/portal/kelas"
+          defaultOpen={showForm}
+        >
+          <OfflineForm
               resource="kelas"
               op="upsert"
               action={upsertKelas}
@@ -70,21 +73,21 @@ export default async function KelasPage({
               {editing ? (
                 <input type="hidden" name="id" value={editing.id} />
               ) : null}
-              <Field label="Jenjang">
+              <Field label="Jenjang" icon={Layers}>
                 <EnumSelect
                   name="jenjang"
                   defaultValue={editing?.jenjang ?? "reguler"}
                   options={enumOptions(KELAS_JENJANG)}
                 />
               </Field>
-              <Field label="Nama kelas">
+              <Field label="Nama kelas" icon={Type}>
                 <Input
                   name="nama_kelas"
                   defaultValue={editing?.nama_kelas ?? ""}
                   placeholder="cth. Reguler A"
                 />
               </Field>
-              <Field label="Jadwal mulai">
+              <Field label="Jadwal mulai" icon={Clock}>
                 <Input
                   name="jadwal_mulai"
                   defaultValue={editing?.jadwal_mulai ?? ""}
@@ -93,25 +96,18 @@ export default async function KelasPage({
               </Field>
               <div className="flex items-end gap-2 sm:col-span-3">
                 <Button type="submit" size="sm">
+                  {editing ? <Check aria-hidden /> : <Plus aria-hidden />}
                   {editing ? "Simpan" : "Tambah"}
                 </Button>
                 <a href="/portal/kelas">
                   <Button variant="outline" size="sm" type="button">
+                    <X aria-hidden />
                     Batal
                   </Button>
                 </a>
               </div>
             </OfflineForm>
-          </div>
-        ) : (
-          <div className="mt-5">
-            <a href="/portal/kelas?tambah=1">
-              <Button type="button" size="sm">
-                + Tambah Kelas
-              </Button>
-            </a>
-          </div>
-        )}
+        </CrudForm>
 
         <div className="mt-6">
           {rows.length ? (
@@ -155,6 +151,7 @@ export default async function KelasPage({
                       <div className="inline-flex gap-2">
                         <a href={`/portal/kelas?edit=${r.id}`}>
                           <Button variant="outline" size="sm" type="button">
+                            <Pencil aria-hidden />
                             Edit
                           </Button>
                         </a>

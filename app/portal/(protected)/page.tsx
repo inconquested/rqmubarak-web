@@ -2,6 +2,7 @@ import {
   Activity,
   BookOpenCheck,
   ClipboardCheck,
+  Filter,
   NotebookPen,
   UserRound,
   Users,
@@ -142,6 +143,7 @@ export default async function PortalPage({
             className="w-28"
           />
           <Button variant="outline" size="sm" type="submit">
+            <Filter aria-hidden />
             Tampilkan
           </Button>
         </form>

@@ -29,7 +29,7 @@ export type { Option };
 const triggerCls =
   "flex h-8 w-full min-w-0 items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent px-2.5 text-sm transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-placeholder:text-muted-foreground aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30 [&_svg]:shrink-0";
 
-/** Pilihan enum pendek — pengganti <select> native. Tulis ke form via hidden input bawaan. */
+/** Short enum picker — native <select> replacement. Writes to form via built-in hidden input. */
 export function EnumSelect({
   name,
   options,
@@ -52,8 +52,8 @@ export function EnumSelect({
   const opts = options.map((o) =>
     typeof o === "string" ? { value: o, label: humanize(o) } : o,
   );
-  // Label trigger di-resolve manual via children-fn: Base UI hanya tahu label
-  // dari item yang sudah mount (popup tertutup = fallback ke raw value).
+  // Trigger label resolved manually via children-fn: Base UI only knows the label
+  // of already-mounted items (closed popup = fallback to raw value).
   return (
     <Select name={name} defaultValue={defaultValue} required={required}>
       <SelectTrigger className={cn("w-full min-w-0", className)}>
@@ -79,7 +79,7 @@ export function EnumSelect({
   );
 }
 
-/** Combobox cari + pilih — untuk daftar panjang (santri, pengajar, kelas). */
+/** Search + select combobox — for long lists (students, teachers, classes). */
 export function Combobox({
   name,
   options,
@@ -176,7 +176,7 @@ function formatID(d: Date) {
   }).format(d);
 }
 
-/** Pemilih tanggal kalender — pengganti <input type="date"> native. */
+/** Calendar date picker — native <input type="date"> replacement. */
 export function DatePicker({
   name,
   defaultValue,

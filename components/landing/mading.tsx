@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 import type { MadingKonten } from "@/lib/portal";
 
-/** Mading publik: carousel 3D. Sembunyi total bila kosong/error. */
+/** Public mading board: 3D carousel. Renders nothing when empty/on error. */
 export async function Mading() {
   if (!isSupabaseConfigured()) return null;
   const { data, error } = await createAdminClient()

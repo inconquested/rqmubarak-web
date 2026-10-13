@@ -18,11 +18,22 @@ export function PageHeader({
   return (
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h1 className="font-display text-2xl font-medium tracking-tight text-[#1d2b21] sm:text-3xl">
+        <h1
+          className={cn(
+            "text-[#1d2b21]",
+            "font-display text-2xl font-medium tracking-tight sm:text-3xl",
+          )}
+        >
           {title}
         </h1>
         {description ? (
-          <p className="mt-1 max-w-xl text-sm leading-relaxed text-[#6b7a6e]">
+          <p
+            className={cn(
+              "mt-1 max-w-xl",
+              "text-[#6b7a6e]",
+              "text-sm leading-relaxed",
+            )}
+          >
             {description}
           </p>
         ) : null}
@@ -49,27 +60,38 @@ export function StatCard({
   countTo?: number;
   suffix?: string;
   delay?: number;
-  /** Layout besar ala dashboard refs: ikon kiri, angka besar di atas label. */
+  /** Large dashboard-refs-style layout: icon left, big number above label. */
   hero?: boolean;
 }) {
   if (hero) {
     return (
       <Reveal delay={delay} className="h-full">
-        <Card className="lift group flex h-full items-center gap-4 border-white/60 bg-white/80 p-5 backdrop-blur-sm sm:p-6">
+        <Card
+          className={cn(
+            "flex h-full items-center gap-4 p-5 backdrop-blur-sm sm:p-6",
+            "border-white/60 bg-white/80",
+            "lift group",
+          )}
+        >
           {Icon ? (
-            <IconTile className="lift-icon size-10 [&_svg]:size-5">
+            <IconTile className={cn("size-10 [&_svg]:size-5", "lift-icon")}>
               <Icon aria-hidden />
             </IconTile>
           ) : null}
           <div>
-            <p className="font-display text-3xl font-semibold text-[#1d2b21] tabular-nums sm:text-4xl">
+            <p
+              className={cn(
+                "text-[#1d2b21]",
+                "font-display text-3xl font-semibold tabular-nums sm:text-4xl",
+              )}
+            >
               {countTo !== undefined ? (
                 <CountUp to={countTo} suffix={suffix} />
               ) : (
                 value
               )}
             </p>
-            <p className="mt-0.5 text-[12px] font-medium text-[#6b7a6e]">
+            <p className={cn("mt-0.5", "text-[#6b7a6e]", "text-[12px] font-medium")}>
               {label}
             </p>
           </div>
@@ -79,16 +101,22 @@ export function StatCard({
   }
   return (
     <Reveal delay={delay}>
-      <Card className="lift group h-full p-4 sm:p-5">
+      <Card className={cn("h-full p-4 sm:p-5", "lift group")}>
         <div className="flex items-center gap-2.5">
           {Icon ? (
-            <IconTile className="lift-icon size-8 [&_svg]:size-4">
+            <IconTile className={cn("size-8 [&_svg]:size-4", "lift-icon")}>
               <Icon aria-hidden />
             </IconTile>
           ) : null}
-          <p className="text-[12px] font-medium text-[#6b7a6e]">{label}</p>
+          <p className={cn("text-[#6b7a6e]", "text-[12px] font-medium")}>{label}</p>
         </div>
-        <p className="font-display mt-2 text-2xl font-medium text-[#1d2b21] tabular-nums sm:text-3xl">
+        <p
+          className={cn(
+            "mt-2",
+            "text-[#1d2b21]",
+            "font-display text-2xl font-medium tabular-nums sm:text-3xl",
+          )}
+        >
           {countTo !== undefined ? (
             <CountUp to={countTo} suffix={suffix} />
           ) : (
@@ -96,7 +124,13 @@ export function StatCard({
           )}
         </p>
         {sub ? (
-          <p className="mt-1 text-[12px] leading-relaxed text-[#6b7a6e]">
+          <p
+            className={cn(
+              "mt-1",
+              "text-[#6b7a6e]",
+              "text-[12px] leading-relaxed",
+            )}
+          >
             {sub}
           </p>
         ) : null}
@@ -105,7 +139,7 @@ export function StatCard({
   );
 }
 
-/** Grafik batang — tumbuh via scaleX, stagger 40ms per baris. */
+/** Bar chart — grows via scaleX, 40ms stagger per row. */
 export function Bars({
   data,
 }: {
@@ -119,11 +153,16 @@ export function Bars({
           key={d.label}
           title={`${d.label}: ${d.value}${d.hint ? ` (${d.hint})` : ""}`}
         >
-          <div className="mb-1 flex items-baseline justify-between gap-2 text-[12px]">
-            <span className="font-medium text-[#4b5b4f]">
+          <div
+            className={cn(
+              "mb-1 flex items-baseline justify-between gap-2",
+              "text-[12px]",
+            )}
+          >
+            <span className={cn("text-[#4b5b4f]", "font-medium")}>
               {humanize(d.label)}
             </span>
-            <span className="text-[#6b7a6e] tabular-nums">
+            <span className={cn("text-[#6b7a6e]", "tabular-nums")}>
               {d.value}
               {d.hint ? ` · ${d.hint}` : null}
             </span>
@@ -143,11 +182,11 @@ export function StatusBadge({ status }: { status: string }) {
           status,
         ) && "bg-[#e4eee2] text-[#2c4232]",
         (status === "alpa" || status === "nonaktif") &&
-          "bg-red-50 text-red-700",
+          "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300",
         ["izin", "sakit", "jayyid", "murajaah"].includes(status) &&
-          "bg-amber-50 text-amber-800",
+          "bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
         (status === "pemilik" || status === "ziyadah") &&
-          "bg-[#1d2b21] text-white",
+          "bg-[#1d2b21] text-white dark:bg-[#33513b] dark:text-[#e9f1ea]",
       )}
     >
       <span>{humanize(status)}</span>
@@ -157,16 +196,29 @@ export function StatusBadge({ status }: { status: string }) {
 
 export function Field({
   label,
+  icon: Icon,
   children,
   className,
 }: {
   label: string;
+  icon?: LucideIcon;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={cn("min-w-0 space-y-1.5", className)}>
-      <Label className="text-[13px] text-[#4b5b4f]">{label}</Label>
+    <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
+      <Label
+        className={cn(
+          "flex items-center gap-1.5",
+          "text-[#4b5b4f]",
+          "text-[13px]",
+        )}
+      >
+        {Icon ? (
+          <Icon aria-hidden className={cn("size-3.5 shrink-0", "text-[#7d9b84]")} />
+        ) : null}
+        {label}
+      </Label>
       {children}
     </div>
   );
@@ -178,10 +230,11 @@ export function FormNotice({ ok, error }: { ok?: string; error?: string }) {
     <p
       role={error ? "alert" : "status"}
       className={cn(
-        "notice-in rounded-xl border px-3.5 py-2.5 text-[13px]",
+        "rounded-xl border px-3.5 py-2.5",
         error
-          ? "border-red-200 bg-red-50 text-red-700"
+          ? "border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
           : "border-[#d8e2d6] bg-[#eef4ec] text-[#2c4232]",
+        "notice-in text-[13px]",
       )}
     >
       {error ?? ok}
@@ -192,23 +245,35 @@ export function FormNotice({ ok, error }: { ok?: string; error?: string }) {
 export function SetupNotice() {
   return (
     <Card className="max-w-xl p-5 sm:p-6">
-      <h2 className="font-display text-lg font-medium text-[#1d2b21]">
+      <h2
+        className={cn("text-[#1d2b21]", "font-display text-lg font-medium")}
+      >
         Hubungkan Supabase dulu
       </h2>
-      <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-[#4b5b4f]">
+      <ol
+        className={cn(
+          "mt-3 list-decimal space-y-1.5 pl-5",
+          "text-[#4b5b4f]",
+          "text-sm leading-relaxed",
+        )}
+      >
         <li>
           Skema database sudah ada (
-          <code className="rounded bg-[#eef4ec] px-1">
+          <code className={cn("rounded px-1", "bg-[#eef4ec]")}>
             supabase/schema_real.sql
           </code>
           ).
         </li>
         <li>
-          Copas <code className="rounded bg-[#eef4ec] px-1">.env.example</code>{" "}
-          menjadi <code className="rounded bg-[#eef4ec] px-1">.env.local</code>{" "}
+          Copas{" "}
+          <code className={cn("rounded px-1", "bg-[#eef4ec]")}>.env.example</code>{" "}
+          menjadi{" "}
+          <code className={cn("rounded px-1", "bg-[#eef4ec]")}>.env.local</code>{" "}
           lalu isi URL + anon key +{" "}
-          <code className="rounded bg-[#eef4ec] px-1">service_role</code>,
-          restart dev server.
+          <code className={cn("rounded px-1", "bg-[#eef4ec]")}>
+            service_role
+          </code>
+          , restart dev server.
         </li>
         <li>Masuk dengan akun pemilik (peran = pemilik, status = aktif).</li>
       </ol>
@@ -234,7 +299,9 @@ export function AvatarNama({
     <span
       aria-hidden
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full bg-[#d5e3d3] text-[12px] font-semibold text-[#3d4f42]",
+        "flex size-9 shrink-0 items-center justify-center rounded-full",
+        "bg-[#d5e3d3] text-[#3d4f42]",
+        "text-[12px] font-semibold",
         className,
       )}
     >
@@ -243,7 +310,7 @@ export function AvatarNama({
   );
 }
 
-/** Panel besar daftar portal — pola refs: white/75 blur rounded-3xl p-5 sm:p-7. */
+/** Large portal list panel — refs pattern: white/75 blur rounded-3xl p-5 sm:p-7. */
 export function Panel({
   className,
   ...props
@@ -251,7 +318,9 @@ export function Panel({
   return (
     <div
       className={cn(
-        "rounded-3xl border border-white/60 bg-white/75 p-5 shadow-[0_1px_2px_rgba(29,43,33,0.06),0_12px_40px_-16px_rgba(61,79,66,0.18)] backdrop-blur sm:p-7",
+        "rounded-3xl border p-5 backdrop-blur sm:p-7",
+        "border-white/60 bg-white/75",
+        "shadow-[0_1px_2px_rgba(29,43,33,0.06),0_12px_40px_-16px_rgba(61,79,66,0.18)]",
         className,
       )}
       {...props}
@@ -259,7 +328,7 @@ export function Panel({
   );
 }
 
-/** Header di dalam Panel: judul section kiri, meta muted kanan. */
+/** Header inside Panel: section title left, muted meta right. */
 export function PanelHeader({
   title,
   meta,
@@ -271,12 +340,19 @@ export function PanelHeader({
 }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-2">
-      <h2 className="font-display text-lg font-medium text-[#1d2b21] sm:text-xl">
+      <h2
+        className={cn(
+          "text-[#1d2b21]",
+          "font-display text-lg font-medium sm:text-xl",
+        )}
+      >
         {title}
       </h2>
       <div className="flex items-center gap-3">
         {action}
-        {meta ? <p className="text-[12px] text-[#6b7a6e]">{meta}</p> : null}
+        {meta ? (
+          <p className={cn("text-[#6b7a6e]", "text-[12px]")}>{meta}</p>
+        ) : null}
       </div>
     </div>
   );
@@ -284,7 +360,13 @@ export function PanelHeader({
 
 export function Empty({ text = "Belum ada data." }: { text?: string }) {
   return (
-    <p className="rounded-xl border border-dashed border-[#d8e2d6] bg-[#fafcfa] px-4 py-6 text-center text-[13px] text-[#6b7a6e]">
+    <p
+      className={cn(
+        "rounded-xl border border-dashed px-4 py-6",
+        "border-[#d8e2d6] bg-[#fafcfa] text-[#6b7a6e]",
+        "text-center text-[13px]",
+      )}
+    >
       {text}
     </p>
   );

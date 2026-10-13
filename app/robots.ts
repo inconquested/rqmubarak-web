@@ -3,7 +3,7 @@ import { siteUrl } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    // Portal pemilik disembunyikan total: tidak di-crawl, tidak di sitemap.
+    // Owner portal fully hidden: no crawl, no sitemap.
     rules: [
       { userAgent: "*", allow: "/", disallow: ["/portal"] },
     ],

@@ -31,7 +31,7 @@ function shortDate(iso: string) {
   );
 }
 
-/** Tren kehadiran harian: hadir (area penuh) vs tercatat (garis). */
+/** Daily attendance trend: present (filled area) vs recorded (line). */
 export function KehadiranChart({
   data,
 }: {
@@ -62,7 +62,7 @@ export function KehadiranChart({
   );
 }
 
-/** Donat dua-tiga irisan + legenda kustom (tooltip bawaan shadcn). */
+/** Two-to-three-slice donut + custom legend (built-in shadcn tooltip). */
 export function DonutChart({
   data,
   colors = [INK, SAGE, SAGE_PALE],
@@ -106,7 +106,7 @@ export function DonutChart({
   );
 }
 
-/** Santri per kelas: batang horizontal. */
+/** Students per class: horizontal bars. */
 export function KelasChart({ data }: { data: { nama: string; santri: number }[] }) {
   const config: ChartConfig = { santri: { label: "Santri", color: SAGE_DEEP } };
   return (

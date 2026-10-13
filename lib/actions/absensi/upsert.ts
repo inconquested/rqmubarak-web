@@ -1,9 +1,9 @@
 "use server";
 
 import { ABSENSI_STATUS } from "@/lib/portal";
-import { fail, idOrNull, ok, requirePemilik, str } from "./shared";
+import { fail, idOrNull, ok, requirePemilik, str } from "../shared";
 
-/* Transaksi: absensi (satu baris per santri per hari — samakan perilaku upsert aplikasi) */
+/* Transaction: absensi (one row per student per day — match the app's upsert behavior) */
 
 export async function upsertAbsensi(fd: FormData) {
   const returnTo = "/portal/absensi";
@@ -17,7 +17,12 @@ export async function upsertAbsensi(fd: FormData) {
   if (!(ABSENSI_STATUS as readonly string[]).includes(status))
     fail(returnTo, "Status tidak valid.");
   const id = idOrNull(fd);
-  const payload = { santri_id, pengajar_id, tanggal: `${tanggal}T00:00:00`, status };
+  const payload = {
+    santri_id,
+    pengajar_id,
+    tanggal: `${tanggal}T00:00:00`,
+    status,
+  };
   if (id) {
     const { error } = await db.from("absensi").update(payload).eq("id", id);
     if (error) fail(returnTo, error.message);
@@ -37,14 +42,4 @@ export async function upsertAbsensi(fd: FormData) {
     : await db.from("absensi").insert(payload);
   if (error) fail(returnTo, error.message);
   ok(returnTo, "Absensi tersimpan.");
-}
-
-export async function deleteAbsensi(fd: FormData) {
-  const returnTo = "/portal/absensi";
-  const { db } = await requirePemilik();
-  const id = str(fd, "id");
-  if (!id) fail(returnTo, "ID tidak valid.");
-  const { error } = await db.from("absensi").delete().eq("id", id);
-  if (error) fail(returnTo, error.message);
-  ok(returnTo, "Baris absensi dihapus.");
 }

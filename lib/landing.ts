@@ -14,6 +14,7 @@ export const NAV_LINKS = [
   { label: "Program", href: "#program" },
   { label: "Sistem", href: "#sistem" },
   { label: "Mading", href: "#mading" },
+  { label: "Testimoni", href: "#testimoni" },
   { label: "Kontak", href: "#kontak" },
 ] as const;
 

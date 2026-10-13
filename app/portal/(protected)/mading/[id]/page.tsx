@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getMading, MadingArticle } from "@/components/mading-article";
 
-/** Varian pemilik (butuh login) — sama dengan versi publik + tombol Ubah. */
+/** Owner variant (requires login) — same as public version + Edit button. */
 export default async function MadingArtikelPortalPage({
   params,
 }: {

@@ -76,7 +76,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       className={cn("h-full", "antialiased", fraunces.variable, inter.variable)}
     >
+      {/* Apply saved theme before render — avoid light-to-dark flash. */}
       <body className="min-h-full flex flex-col">
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static theme script, no user input
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("rqm-tema");if(t==="gelap"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}}catch(e){}})();`,
+          }}
+        />
         {children}
         <Analytics />
       </body>

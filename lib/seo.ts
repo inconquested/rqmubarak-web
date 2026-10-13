@@ -1,14 +1,14 @@
 /**
- * Kata kunci SEO terpusat — dipakai di `app/layout.tsx`.
- * ponytail: tambah keyword kota (mis. "les mengaji anak di ...")
- * saat lokasi resmi RQ Mubarak sudah pasti, itu yang paling menaikkan niche.
+ * Centralized SEO keywords — used in `app/layout.tsx`.
+ * ponytail: add city keywords (e.g. "les mengaji anak di ...")
+ * once RQ Mubarak's official location is fixed; that lifts the niche most.
  */
 export const siteKeywords = [
-  // Merek
+  // Brand
   "rumah quran mubarak",
   "rq mubarak",
   "rumah quran mubarak pendaftaran",
-  // Anak — niat orang tua
+  // Kids — parent intent
   "tahfidz anak",
   "kelas tahfidz anak",
   "les mengaji anak",
@@ -23,7 +23,7 @@ export const siteKeywords = [
   "wisuda tahfidz anak",
   "biaya les mengaji anak",
   "cara memilih tempat mengaji anak",
-  // Dewasa — mulai dari nol sampai tahsin
+  // Adults — from zero to tahsin
   "belajar mengaji dari nol untuk dewasa",
   "kelas mengaji dewasa",
   "kelas mengaji ibu-ibu",
@@ -34,7 +34,7 @@ export const siteKeywords = [
   "perbaikan bacaan al quran",
   "belajar makhraj huruf",
   "belajar gharib musykilat",
-  // Program & format
+  // Programs & formats
   "halaqah quran",
   "halaqah quran dewasa",
   "halaqah tahfidz",
@@ -48,19 +48,19 @@ export const siteKeywords = [
   "les mengaji online anak",
   "tahfidz online dewasa",
   "privat tahfidz online",
-  // Guru
+  // Teachers
   "guru ngaji privat",
   "guru ngaji datang ke rumah",
   "guru tahfidz privat",
   "cari guru ngaji anak",
-  // Pembeda — yang dicari sebelum memilih tempat
+  // Differentiators — searched before choosing a place
   "mutabaah hafalan digital",
   "mutabaah santri",
   "absensi santri digital",
   "rapor hafalan santri",
   "catatan perkembangan mengaji anak",
   "laporan hafalan untuk orang tua",
-  // Niat lokal & pembanding
+  // Local intent & comparisons
   "rumah quran terdekat",
   "tempat tahfidz terdekat",
   "rumah tahfidz terbaik",

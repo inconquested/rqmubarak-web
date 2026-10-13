@@ -1,5 +1,6 @@
 "use client";
 
+import { RefreshCw, Send } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import {
   deleteAbsensi,
@@ -30,7 +31,7 @@ import {
 
 type ServerFn = (fd: FormData) => Promise<void>;
 
-/* Registri replay: resource halaman → pasangan server action-nya. */
+/* Replay registry: page resource → its server action pair. */
 const ACTIONS: Record<OfflineResource, Record<OfflineOpKind, ServerFn>> = {
   kelas: { upsert: upsertKelas, delete: deleteKelas },
   pengguna: { upsert: upsertPengguna, delete: deletePengguna },
@@ -46,8 +47,8 @@ const isRedirectError = (e: unknown) =>
   (e.message.includes("NEXT_REDIRECT") || (e as { digest?: unknown }).digest === "NEXT_REDIRECT" ||
     String((e as { digest?: unknown }).digest ?? "").startsWith("NEXT_REDIRECT"));
 
-/* Pengganti <form action={...}>: daring → server action normal;
- * luring → payload + flag _pending masuk localStorage. */
+/* Replacement for <form action={...}>: online → normal server action;
+ * offline → payload + _pending flag into localStorage. */
 export function OfflineForm({
   resource,
   op,
@@ -97,7 +98,7 @@ export function OfflineForm({
 
 let replaying = false;
 
-/* Banner status + kirim ulang antrean begitu daring (sekali pasang di layout). */
+/* Status banner + queue replay once back online (mount once in layout). */
 export function OfflineProvider({ children }: { children: React.ReactNode }) {
   const [online, setOnline] = useState(true);
   const [pending, setPending] = useState(0);
@@ -110,9 +111,9 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
     setSending(true);
     setFailed(false);
     try {
-      // Shift DULU sebelum kirim → StrictMode double-effect tak menggandakan.
-      // Sukses = server me-redirect (NEXT_REDIRECT); navigasi memuat ulang dan
-      // sisa antrean lanjut terkirim setelah mount ulang.
+      // Shift BEFORE sending → StrictMode double-effect won't duplicate.
+      // Success = server redirects (NEXT_REDIRECT); navigation reloads and
+      // remaining queue keeps sending after remount.
       for (;;) {
         const head = shiftQueue();
         if (!head || !navigator.onLine) break;
@@ -178,6 +179,7 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
                 onClick={() => void replay()}
                 className="rounded-lg border border-amber-300 bg-white px-2 py-0.5 text-[12px] font-medium hover:bg-amber-100"
               >
+                <RefreshCw aria-hidden className="size-3.5" />
                 Kirim ulang
               </button>
             </span>
@@ -189,6 +191,7 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
                 onClick={() => void replay()}
                 className="rounded-lg border border-[#bccfba] bg-white px-2 py-0.5 text-[12px] font-medium hover:bg-[#eef4ec]"
               >
+                <Send aria-hidden className="size-3.5" />
                 Kirim sekarang
               </button>
             </span>

@@ -3,7 +3,7 @@
 import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/** Cetak rapor — browser menangani ekspor PDF lewat print dialog. */
+/** Print report card — browser handles PDF export via print dialog. */
 export function PrintButton() {
   return (
     <Button
